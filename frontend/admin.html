@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Executive Portal | Aura Grand</title>
+  <meta name="description" content="Aura Grand Luxury Hotel Group - Administrative Control Center. Manage registered users, customer booked tickets, and Tamil Nadu trip places.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="hotels.html">Hotels</a></li>
+        <li class="nav-item"><a href="rooms.html">Suites & Rooms</a></li>
+        <li id="nav-admin-link" class="nav-item active"><a href="admin.html" style="color:var(--accent-gold);font-weight:600;"><i class="fa-solid fa-shield-halved"></i> Admin Portal</a></li>
+      </ul>
+      <div id="nav-auth-container" class="nav-auth">
+        <!-- Rendered by Auth.updateNav() -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Access Denied Screen (Shown to non-admin visitors) -->
+  <div id="admin-access-denied" class="container" style="display:none; padding: 6rem 1rem; text-align: center;">
+    <div class="luxury-card" style="max-width: 580px; margin: 0 auto; padding: 3rem 2rem;">
+      <div style="font-size: 3.5rem; color: #ef4444; margin-bottom: 1.2rem;">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 style="font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 0.8rem;">Administrator Access Required</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.6;">
+        You must be authenticated with an executive administrator account to manage registered users, customer booked tickets, and trip places.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="login.html" class="btn btn-gold">
+          <i class="fa-solid fa-lock"></i> Sign In as Admin
+        </a>
+        <a href="index.html" class="btn btn-outline">
+          <i class="fa-solid fa-house"></i> Return to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Main Portal -->
+  <main id="admin-portal-content" class="container" style="padding-top: 2.5rem; padding-bottom: 5rem; display: none;">
+    
+    <!-- Admin Header Banner -->
+    <div class="admin-header-box">
+      <div>
+        <span class="hero-pill" style="margin-bottom: 0.8rem;">
+          <i class="fa-solid fa-crown" style="color:var(--accent-gold);"></i> Executive Management Console
+        </span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.2rem; color: #fff; margin-bottom: 0.4rem;">
+          Operations & Control Center
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">
+          Oversee guest accounts, customer ticket folios, and luxury trip destinations across Tamil Nadu.
+        </p>
+      </div>
+      <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+        <button onclick="refreshDashboardData()" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-rotate"></i> Sync Data
+        </button>
+        <button onclick="openAddPlaceModal()" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-hotel"></i> Add Trip Place
+        </button>
+        <button onclick="openAdminAddSuiteModal()" class="btn btn-gold btn-sm">
+          <i class="fa-solid fa-plus"></i> Add Suite
+        </button>
+      </div>
+    </div>
+
+    <!-- 5 High-Level KPI Metric Cards -->
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Registered Users</span>
+          <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+        </div>
+        <div id="kpi-users" class="kpi-value">--</div>
+        <div id="kpi-users-sub" class="kpi-sub">Loading user accounts...</div>
+      </div>
+
+      <div class="admin-kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Booked Trip Tickets</span>
+          <div class="kpi-icon"><i class="fa-solid fa-ticket"></i></div>
+        </div>
+        <div id="kpi-bookings" class="kpi-value">--</div>
+        <div id="kpi-bookings-sub" class="kpi-sub">Loading reservations...</div>
+      </div>
+
+      <div class="admin-kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Gross Booking Revenue</span>
+          <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+        </div>
+        <div id="kpi-revenue" class="kpi-value">$--</div>
+        <div class="kpi-sub">Total confirmed settlements</div>
+      </div>
+
+      <div class="admin-kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Active Trip Places</span>
+          <div class="kpi-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+        </div>
+        <div id="kpi-places" class="kpi-value">--</div>
+        <div class="kpi-sub">Tamil Nadu luxury retreats</div>
+      </div>
+
+      <div class="admin-kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Managed Suites</span>
+          <div class="kpi-icon"><i class="fa-solid fa-bed"></i></div>
+        </div>
+        <div id="kpi-suites" class="kpi-value">--</div>
+        <div id="kpi-suites-sub" class="kpi-sub">Rooms & penthouses</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs-nav">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('users')">
+        <i class="fa-solid fa-users"></i> 1. Manage Total Users <span id="badge-tab-users" class="tag" style="margin-left:4px;">0</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('tickets')">
+        <i class="fa-solid fa-ticket"></i> 2. Customer Booked Tickets <span id="badge-tab-tickets" class="tag" style="margin-left:4px;">0</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('places')">
+        <i class="fa-solid fa-hotel"></i> 3. Manage Trip Places <span id="badge-tab-places" class="tag" style="margin-left:4px;">0</span>
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('suites')">
+        <i class="fa-solid fa-bed"></i> 4. Manage Suites <span id="badge-tab-suites" class="tag" style="margin-left:4px;">0</span>
+      </button>
+    </div>
+
+    <!-- ======================================================================
+         TAB 1: MANAGE TOTAL USERS
+         ====================================================================== -->
+    <section id="tab-content-users" class="admin-tab-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
+        <div>
+          <h2 style="font-family:var(--font-serif); font-size:1.4rem;">Registered User Accounts</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem;">View member accounts, assign administrative roles, or remove accounts.</p>
+        </div>
+        <div style="display:flex; gap:0.6rem;">
+          <input type="text" id="search-users-input" placeholder="Search by name, email, phone..." oninput="filterUsersTable()" 
+                 style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem; width:260px;">
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Member Name & Contact</th>
+              <th>System Role</th>
+              <th>Total Stays Booked</th>
+              <th>Total Expenditure</th>
+              <th>Account Created</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr>
+              <td colspan="6" style="text-align:center; padding:3rem; color:var(--text-dim);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Loading user accounts...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 2: CUSTOMER BOOKED TICKETS
+         ====================================================================== -->
+    <section id="tab-content-tickets" class="admin-tab-panel" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
+        <div>
+          <h2 style="font-family:var(--font-serif); font-size:1.4rem;">Customer Booked Trip Tickets</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Monitor reservations, inspect guest folios, approve bookings, or process ticket cancellations.</p>
+        </div>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <select id="filter-ticket-status" onchange="filterTicketsTable()" style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem;">
+            <option value="all">All Ticket Statuses</option>
+            <option value="confirmed">Confirmed Only</option>
+            <option value="pending">Pending Payment</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <input type="text" id="search-tickets-input" placeholder="Search by ticket ID, guest, hotel..." oninput="filterTicketsTable()"
+                 style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem; width:260px;">
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ticket Code</th>
+              <th>Guest Details</th>
+              <th>Trip Place & Suite</th>
+              <th>Travel Dates & Nights</th>
+              <th>Total Tariff</th>
+              <th>Status</th>
+              <th style="text-align:right;">Ticket Operations</th>
+            </tr>
+          </thead>
+          <tbody id="tickets-table-body">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:3rem; color:var(--text-dim);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Loading customer reservations...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 3: MANAGE TRIP PLACES
+         ====================================================================== -->
+    <section id="tab-content-places" class="admin-tab-panel" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+          <h2 style="font-family:var(--font-serif); font-size:1.4rem;">Tamil Nadu Trip Places & Hotels</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Add new destinations, update hotel details, or manage portfolio inventory.</p>
+        </div>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <select id="filter-place-city" onchange="filterPlacesGrid()" style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem;">
+            <option value="all">All Tamil Nadu Locations</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Ooty">Ooty</option>
+            <option value="Kodaikanal">Kodaikanal</option>
+            <option value="Madurai">Madurai</option>
+            <option value="Mahabalipuram">Mahabalipuram</option>
+          </select>
+          <button onclick="openAddPlaceModal()" class="btn btn-gold btn-sm">
+            <i class="fa-solid fa-plus"></i> Add Trip Place
+          </button>
+        </div>
+      </div>
+
+      <div id="admin-places-grid" class="grid-3">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         TAB 4: MANAGE SUITES
+         ====================================================================== -->
+    <section id="tab-content-suites" class="admin-tab-panel" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+          <h2 style="font-family:var(--font-serif); font-size:1.4rem;">Tamil Nadu Suites & Rooms Portfolio</h2>
+          <p style="color:var(--text-muted); font-size:0.85rem;">Manage individual suite categories, door numbers, nightly tariffs, guest capacities, and live booking availability.</p>
+        </div>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <select id="filter-suite-hotel" onchange="filterSuitesTable()" style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem;">
+            <option value="all">All Trip Places / Properties</option>
+          </select>
+          <select id="filter-suite-status" onchange="filterSuitesTable()" style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem;">
+            <option value="all">All Availability</option>
+            <option value="available">Active & Bookable</option>
+            <option value="maintenance">Maintenance / Blocked</option>
+          </select>
+          <input type="text" id="search-suites-input" placeholder="Search suite, room no., features..." oninput="filterSuitesTable()"
+                 style="background:var(--bg-card); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; padding:0.5rem 0.9rem; font-size:0.88rem; width:220px;">
+          <button onclick="openAdminAddSuiteModal()" class="btn btn-gold btn-sm">
+            <i class="fa-solid fa-plus"></i> Add New Suite
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Suite / Room</th>
+              <th>Trip Place & Location</th>
+              <th>Price Per Night</th>
+              <th>Capacity & Bed</th>
+              <th>Availability</th>
+              <th>Active Stays</th>
+              <th style="text-align:right;">Suite Operations</th>
+            </tr>
+          </thead>
+          <tbody id="suites-table-body">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:3rem; color:var(--text-dim);">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Loading suites portfolio...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       MODAL: ADD / EDIT TRIP PLACE
+       ====================================================================== -->
+  <div id="modal-trip-place" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-glass); padding-bottom:1rem;">
+        <h3 id="modal-place-title" style="font-family:var(--font-serif); font-size:1.4rem; color:#fff;">
+          <i class="fa-solid fa-hotel" style="color:var(--accent-gold);"></i> Add New Trip Place
+        </h3>
+        <button onclick="closeModal('modal-trip-place')" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-trip-place" onsubmit="handleSaveTripPlace(event)">
+        <input type="hidden" id="place-edit-id" value="">
+
+        <div class="admin-form-group">
+          <label>Trip Place / Hotel Name *</label>
+          <input type="text" id="place-name" placeholder="e.g. Chettinad Heritage Palace & Resort" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>City / Destination (Tamil Nadu) *</label>
+            <select id="place-city" required>
+              <option value="Chennai">Chennai</option>
+              <option value="Ooty">Ooty</option>
+              <option value="Kodaikanal">Kodaikanal</option>
+              <option value="Madurai">Madurai</option>
+              <option value="Mahabalipuram">Mahabalipuram</option>
+              <option value="Coimbatore">Coimbatore</option>
+              <option value="Rameshwaram">Rameshwaram</option>
+              <option value="Kanyakumari">Kanyakumari</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>State</label>
+            <input type="text" id="place-state" value="Tamil Nadu" readonly style="opacity:0.8;">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label>Detailed Address *</label>
+          <input type="text" id="place-address" placeholder="e.g. 45 East Coast Road, Covelong Beach, Chennai" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Star Rating (1.0 - 5.0) *</label>
+            <input type="number" id="place-rating" step="0.1" min="1" max="5" value="4.8" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Starting Rate ($/night) *</label>
+            <input type="number" id="place-rate" min="10" value="280" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Default Suite Title</label>
+            <input type="text" id="place-default-suite" value="Royal Heritage Ocean Suite" required>
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label>Cover Showcase Image URL</label>
+          <input type="url" id="place-image" placeholder="https://images.unsplash.com/photo-..." 
+                 value="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80">
+        </div>
+
+        <div class="admin-form-group">
+          <label>Amenities (Comma separated tags)</label>
+          <input type="text" id="place-amenities" placeholder="Infinity Pool, Ayurvedic Spa, Fine Dining, Free WiFi" 
+                 value="Infinity Pool, Ayurvedic Spa, Fine Dining, 24/7 Butler, Free WiFi">
+        </div>
+
+        <div class="admin-form-group">
+          <label>Narrative Description *</label>
+          <textarea id="place-description" rows="3" placeholder="Describe the ambiance, heritage architecture, and scenic attractions..." required></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.8rem; margin-top:1.5rem;">
+          <button type="button" onclick="closeModal('modal-trip-place')" class="btn btn-outline btn-sm">Cancel</button>
+          <button type="submit" id="btn-save-place" class="btn btn-gold btn-sm">
+            <i class="fa-solid fa-check"></i> Save Trip Place
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODAL: CUSTOMER TICKET & FOLIO DETAILS
+       ====================================================================== -->
+  <div id="modal-ticket-folio" class="admin-modal-overlay">
+    <div class="admin-modal-card" style="max-width: 680px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-glass); padding-bottom:1rem;">
+        <h3 style="font-family:var(--font-serif); font-size:1.4rem; color:var(--accent-gold);">
+          <i class="fa-solid fa-receipt"></i> Customer Ticket & Folio
+        </h3>
+        <button onclick="closeModal('modal-ticket-folio')" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="ticket-folio-content">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.8rem; border-top:1px solid var(--border-glass); padding-top:1.2rem;">
+        <button onclick="window.print()" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-print"></i> Print Official Folio
+        </button>
+        <button onclick="closeModal('modal-ticket-folio')" class="btn btn-gold btn-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  <!-- ======================================================================
+       MODAL: MANAGE / EDIT SUITE
+       ====================================================================== -->
+  <div id="modal-admin-suite" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-glass); padding-bottom:1rem;">
+        <h3 id="modal-admin-suite-title" style="font-family:var(--font-serif); font-size:1.4rem; color:#fff;">
+          <i class="fa-solid fa-sliders" style="color:var(--accent-gold);"></i> Manage Suite
+        </h3>
+        <button onclick="closeModal('modal-admin-suite')" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-admin-suite" onsubmit="handleSaveAdminSuite(event)">
+        <input type="hidden" id="admin-suite-edit-id" value="">
+
+        <div class="admin-form-group">
+          <label>Suite Title / Category *</label>
+          <input type="text" id="admin-suite-name" placeholder="e.g. Deluxe Coromandel Ocean Suite" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Trip Place / Hotel *</label>
+            <select id="admin-suite-hotel-id" required>
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Room Door Number *</label>
+            <input type="text" id="admin-suite-number" placeholder="e.g. Coromandel-101" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Price Per Night ($) *</label>
+            <input type="number" id="admin-suite-price" min="10" step="1" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Max Guests Capacity *</label>
+            <input type="number" id="admin-suite-capacity" min="1" max="10" value="2" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Bed Configuration *</label>
+            <input type="text" id="admin-suite-bed" placeholder="King Size Bed" value="King Size Bed" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Availability Status</label>
+            <select id="admin-suite-available">
+              <option value="true">Active & Bookable</option>
+              <option value="false">Under Maintenance / Blocked</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Cover Photo URL</label>
+            <input type="url" id="admin-suite-image" placeholder="https://images.unsplash.com/photo-...">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label>Features & Amenities (Comma separated tags)</label>
+          <input type="text" id="admin-suite-features" placeholder="Private Sea Balcony, Italian Marble Bath, Rain Shower, Free WiFi">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.8rem; border-top:1px solid var(--border-glass); padding-top:1.2rem;">
+          <button type="button" id="btn-admin-delete-suite" onclick="deleteCurrentAdminSuite()" class="btn btn-danger btn-sm" style="display:none;">
+            <i class="fa-solid fa-trash"></i> Delete Suite
+          </button>
+          <div style="display:flex; gap:0.6rem; margin-left:auto;">
+            <button type="button" onclick="closeModal('modal-admin-suite')" class="btn btn-outline btn-sm">Cancel</button>
+            <button type="submit" id="btn-admin-save-suite" class="btn btn-gold btn-sm">
+              <i class="fa-solid fa-check"></i> Save Suite Details
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Aura Grand Hotel Group Ltd. Executive Administration Platform.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // State storage for filtering
+    let allUsers = [];
+    let allBookings = [];
+    let allHotels = [];
+    let allRooms = [];
+
+    // Access Verification on page load
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = Auth.getUser();
+      const token = Auth.getToken();
+
+      if (!token || !user || user.role !== "admin") {
+        document.getElementById("admin-access-denied").style.display = "block";
+        document.getElementById("admin-portal-content").style.display = "none";
+        return;
+      }
+
+      document.getElementById("admin-access-denied").style.display = "none";
+      document.getElementById("admin-portal-content").style.display = "block";
+
+      await refreshDashboardData();
+    });
+
+    // Tab switcher
+    function switchAdminTab(tabName) {
+      document.querySelectorAll(".admin-tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".admin-tab-panel").forEach(panel => panel.style.display = "none");
+
+      if (tabName === "users") {
+        document.getElementById("tab-content-users").style.display = "block";
+      } else if (tabName === "tickets") {
+        document.getElementById("tab-content-tickets").style.display = "block";
+      } else if (tabName === "places") {
+        document.getElementById("tab-content-places").style.display = "block";
+      } else if (tabName === "suites") {
+        document.getElementById("tab-content-suites").style.display = "block";
+      }
+
+      const targetBtn = Array.from(document.querySelectorAll(".admin-tab-btn")).find(b => b.getAttribute("onclick")?.includes(`'${tabName}'`));
+      if (targetBtn) targetBtn.classList.add("active");
+    }
+
+    // Refresh all dashboard metrics & records
+    async function refreshDashboardData() {
+      try {
+        // 1. Fetch Stats
+        const statsRes = await apiRequest("/admin/stats", "GET", null, true);
+        if (statsRes.success) {
+          const s = statsRes.stats;
+          document.getElementById("kpi-users").innerText = s.total_users;
+          document.getElementById("kpi-users-sub").innerText = `${s.total_guests} Guests • ${s.total_admins} Admins`;
+          
+          document.getElementById("kpi-bookings").innerText = s.total_bookings;
+          document.getElementById("kpi-bookings-sub").innerText = `${s.confirmed_bookings} Confirmed • ${s.pending_bookings} Pending`;
+
+          document.getElementById("kpi-revenue").innerText = `$${s.total_revenue.toLocaleString()}`;
+          document.getElementById("kpi-places").innerText = s.total_hotels;
+          document.getElementById("kpi-suites").innerText = s.total_rooms || "--";
+
+          document.getElementById("badge-tab-users").innerText = s.total_users;
+          document.getElementById("badge-tab-tickets").innerText = s.total_bookings;
+          document.getElementById("badge-tab-places").innerText = s.total_hotels;
+        }
+
+        // 2. Fetch Users
+        const usersRes = await apiRequest("/admin/users", "GET", null, true);
+        if (usersRes.success) {
+          allUsers = usersRes.users;
+          renderUsersTable(allUsers);
+        }
+
+        // 3. Fetch Booked Tickets
+        const bookingsRes = await apiRequest("/admin/bookings", "GET", null, true);
+        if (bookingsRes.success) {
+          allBookings = bookingsRes.bookings;
+          renderTicketsTable(allBookings);
+        }
+
+        // 4. Fetch Trip Places (Hotels)
+        const hotelsRes = await apiRequest("/hotels");
+        if (hotelsRes.success) {
+          allHotels = hotelsRes.hotels;
+          renderPlacesGrid(allHotels);
+          populateAdminSuiteHotelSelects();
+        }
+
+        // 5. Fetch Managed Suites (Rooms)
+        const roomsRes = await apiRequest("/admin/rooms", "GET", null, true);
+        if (roomsRes.success) {
+          allRooms = roomsRes.rooms;
+          renderSuitesTable(allRooms);
+          document.getElementById("badge-tab-suites").innerText = allRooms.length;
+          document.getElementById("kpi-suites").innerText = allRooms.length;
+        }
+
+        showToast("Dashboard synchronized successfully.", "info");
+      } catch (err) {
+        showToast(err.message || "Failed to load admin records.", "error");
+      }
+    }
+
+    // =========================================================================
+    // SECTION 1: MANAGE USERS
+    // =========================================================================
+    function renderUsersTable(users) {
+      const tbody = document.getElementById("users-table-body");
+      const currentUser = Auth.getUser();
+
+      if (!users.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2.5rem; color:var(--text-dim);">No user accounts found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => {
+        const isSelf = currentUser && currentUser.id === u.id;
+        const isAdmin = u.role === "admin";
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:600; color:#fff; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-circle-user" style="color:var(--text-dim); font-size:1.2rem;"></i>
+                ${u.name} ${isSelf ? '<span class="tag" style="color:var(--accent-gold); font-size:0.7rem;">You</span>' : ''}
+              </div>
+              <div style="color:var(--text-muted); font-size:0.82rem; margin-top:2px;">
+                <i class="fa-solid fa-envelope" style="font-size:0.75rem; margin-right:4px;"></i>${u.email}
+                ${u.phone ? ` • <i class="fa-solid fa-phone" style="font-size:0.75rem; margin-right:4px;"></i>${u.phone}` : ''}
+              </div>
+            </td>
+            <td>
+              <span class="status-pill ${isAdmin ? 'status-admin' : 'status-guest'}">
+                <i class="fa-solid ${isAdmin ? 'fa-crown' : 'fa-user'}"></i> ${u.role}
+              </span>
+            </td>
+            <td>
+              <strong style="color:var(--accent-gold);">${u.total_bookings || 0}</strong> stays
+            </td>
+            <td>
+              <strong>$${(u.total_spent || 0).toLocaleString()}</strong>
+            </td>
+            <td style="color:var(--text-dim); font-size:0.85rem;">
+              ${(u.created_at || '').split('T')[0] || '2026-01-01'}
+            </td>
+            <td style="text-align:right; white-space:nowrap;">
+              ${!isSelf ? `
+                <button onclick="toggleUserRole('${u.id}', '${isAdmin ? 'guest' : 'admin'}')" class="btn btn-outline btn-sm" title="${isAdmin ? 'Demote to Guest' : 'Promote to Admin'}" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
+                  <i class="fa-solid ${isAdmin ? 'fa-arrow-down' : 'fa-arrow-up'}"></i> ${isAdmin ? 'Demote' : 'Promote'}
+                </button>
+                <button onclick="handleDeleteUser('${u.id}', '${u.name}')" class="btn btn-danger btn-sm" title="Delete User" style="padding:0.35rem 0.6rem; font-size:0.8rem; margin-left:4px;">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              ` : '<span style="color:var(--text-dim); font-size:0.8rem;">Active Session</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterUsersTable() {
+      const q = document.getElementById("search-users-input").value.toLowerCase();
+      const filtered = allUsers.filter(u => 
+        (u.name && u.name.toLowerCase().includes(q)) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.phone && u.phone.toLowerCase().includes(q)) ||
+        (u.role && u.role.toLowerCase().includes(q))
+      );
+      renderUsersTable(filtered);
+    }
+
+    async function toggleUserRole(userId, newRole) {
+      if (!confirm(`Are you sure you want to change this user's role to '${newRole}'?`)) return;
+      try {
+        const res = await apiRequest(`/admin/users/${userId}/role`, "PUT", { role: newRole }, true);
+        if (res.success) {
+          showToast(res.message, "success");
+          await refreshDashboardData();
+        }
+      } catch (e) {
+        showToast(e.message || "Failed to update role", "error");
+      }
+    }
+
+    async function handleDeleteUser(userId, userName) {
+      if (!confirm(`Are you sure you want to permanently delete the user account for '${userName}'? This will remove all their credentials.`)) return;
+      try {
+        const res = await apiRequest(`/admin/users/${userId}`, "DELETE", null, true);
+        if (res.success) {
+          showToast(res.message, "success");
+          await refreshDashboardData();
+        }
+      } catch (e) {
+        showToast(e.message || "Failed to delete user", "error");
+      }
+    }
+
+    // =========================================================================
+    // SECTION 2: MANAGE CUSTOMER BOOKED TICKETS
+    // =========================================================================
+    function renderTicketsTable(bookings) {
+      const tbody = document.getElementById("tickets-table-body");
+      if (!bookings.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-dim);">No customer booked tickets found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => {
+        const statusClass = b.status === "confirmed" ? "status-confirmed" : (b.status === "cancelled" ? "status-cancelled" : "status-pending");
+        const guestName = (b.user && b.user.name) || "Valued Guest";
+        const guestEmail = (b.user && b.user.email) || "--";
+        const hotelName = (b.hotel && b.hotel.name) || "Tamil Nadu Luxury Resort";
+        const hotelCity = (b.hotel && b.hotel.city) || "Tamil Nadu";
+        const roomType = (b.room && b.room.room_type) || "Luxury Suite";
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:var(--accent-gold);">${b.booking_code || b.id}</strong>
+              <div style="color:var(--text-dim); font-size:0.75rem;">ID: ${b.id}</div>
+            </td>
+            <td>
+              <div style="font-weight:600; color:#fff;">${guestName}</div>
+              <div style="color:var(--text-muted); font-size:0.8rem;">${guestEmail}</div>
+            </td>
+            <td>
+              <div style="color:#fff; font-weight:500;">${hotelName}</div>
+              <div style="color:var(--text-dim); font-size:0.8rem;"><i class="fa-solid fa-location-dot"></i> ${hotelCity} • ${roomType}</div>
+            </td>
+            <td>
+              <div style="font-size:0.85rem;"><i class="fa-solid fa-calendar-days"></i> ${b.check_in} ➔ ${b.check_out}</div>
+              <div style="color:var(--text-dim); font-size:0.78rem;">${b.total_nights || 1} nights • ${b.num_guests || 1} guest(s)</div>
+            </td>
+            <td>
+              <strong style="color:#fff;">$${(b.total_amount || 0).toLocaleString()}</strong>
+              <div style="font-size:0.78rem; color:${b.payment ? '#34d399' : '#fbbf24'};">
+                <i class="fa-solid ${b.payment ? 'fa-circle-check' : 'fa-clock'}"></i> ${b.payment ? 'Paid (Card)' : 'Pending'}
+              </div>
+            </td>
+            <td>
+              <span class="status-pill ${statusClass}">${b.status}</span>
+            </td>
+            <td style="text-align:right; white-space:nowrap;">
+              <button onclick="viewTicketFolio('${b.id}')" class="btn btn-outline btn-sm" title="View Ticket Folio" style="padding:0.35rem 0.55rem; font-size:0.8rem;">
+                <i class="fa-solid fa-receipt"></i> Folio
+              </button>
+              ${b.status === "pending" ? `
+                <button onclick="updateTicketStatus('${b.id}', 'confirmed')" class="btn btn-gold btn-sm" title="Confirm Ticket" style="padding:0.35rem 0.55rem; font-size:0.8rem; margin-left:3px;">
+                  <i class="fa-solid fa-check"></i>
+                </button>
+              ` : ''}
+              ${b.status !== "cancelled" ? `
+                <button onclick="updateTicketStatus('${b.id}', 'cancelled')" class="btn btn-danger btn-sm" title="Cancel Ticket" style="padding:0.35rem 0.55rem; font-size:0.8rem; margin-left:3px;">
+                  <i class="fa-solid fa-ban"></i>
+                </button>
+              ` : ''}
+              <button onclick="deleteTicket('${b.id}', '${b.booking_code || b.id}')" class="btn btn-danger btn-sm" title="Delete Record" style="padding:0.35rem 0.55rem; font-size:0.8rem; margin-left:3px;">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTicketsTable() {
+      const q = document.getElementById("search-tickets-input").value.toLowerCase();
+      const status = document.getElementById("filter-ticket-status").value;
+
+      const filtered = allBookings.filter(b => {
+        if (status !== "all" && b.status !== status) return false;
+        if (!q) return true;
+
+        const guestName = (b.user && b.user.name) || "";
+        const guestEmail = (b.user && b.user.email) || "";
+        const hotelName = (b.hotel && b.hotel.name) || "";
+        const code = b.booking_code || b.id;
+
+        return (
+          code.toLowerCase().includes(q) ||
+          guestName.toLowerCase().includes(q) ||
+          guestEmail.toLowerCase().includes(q) ||
+          hotelName.toLowerCase().includes(q)
+        );
+      });
+
+      renderTicketsTable(filtered);
+    }
+
+    async function updateTicketStatus(bookingId, newStatus) {
+      if (!confirm(`Are you sure you want to mark ticket '${bookingId}' as '${newStatus}'?`)) return;
+      try {
+        const res = await apiRequest(`/admin/bookings/${bookingId}/status`, "PUT", { status: newStatus }, true);
+        if (res.success) {
+          showToast(res.message, "success");
+          await refreshDashboardData();
+        }
+      } catch (e) {
+        showToast(e.message || "Failed to update ticket status", "error");
+      }
+    }
+
+    async function deleteTicket(bookingId, code) {
+      if (!confirm(`Permanently delete reservation record for ticket '${code}'?`)) return;
+      try {
+        const res = await apiRequest(`/admin/bookings/${bookingId}`, "DELETE", null, true);
+        if (res.success) {
+          showToast(res.message, "success");
+          await refreshDashboardData();
+        }
+      } catch (e) {
+        showToast(e.message || "Failed to delete ticket", "error");
+      }
+    }
+
+    function viewTicketFolio(bookingId) {
+      const b = allBookings.find(x => x.id === bookingId);
+      if (!b) return;
+
+      const guestName = (b.user && b.user.name) || "Valued Guest";
+      const guestEmail = (b.user && b.user.email) || "N/A";
+      const guestPhone = (b.user && b.user.phone) || "N/A";
+      const hotelName = (b.hotel && b.hotel.name) || "Tamil Nadu Luxury Hotel";
+      const hotelAddress = (b.hotel && b.hotel.address) || "Tamil Nadu, India";
+      const roomType = (b.room && b.room.room_type) || "Luxury Suite";
+      const txn = (b.payment && b.payment.transaction_id) || "TXN_PENDING";
+
+      const html = `
+        <div style="background:var(--bg-main); border:1px solid var(--border-glass); border-radius:var(--radius-md); padding:1.5rem; margin-bottom:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; border-bottom:1px solid var(--border-glass); padding-bottom:1rem;">
+            <div>
+              <div style="font-size:0.8rem; color:var(--accent-gold); font-weight:600; text-transform:uppercase;">OFFICIAL GUEST FOLIO</div>
+              <h2 style="font-family:var(--font-serif); font-size:1.6rem; color:#fff;">${b.booking_code || b.id}</h2>
+              <div style="font-size:0.82rem; color:var(--text-dim);">Issued by Aura Grand Luxury Hospitality Group</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="status-pill status-${b.status}">${b.status}</span>
+              <div style="font-size:0.8rem; color:var(--text-dim); margin-top:4px;">Txn: ${txn}</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem; font-size:0.88rem;">
+            <div>
+              <div style="color:var(--text-dim); font-size:0.75rem; text-transform:uppercase;">Guest Information</div>
+              <div style="font-weight:600; color:#fff;">${guestName}</div>
+              <div style="color:var(--text-muted);">${guestEmail}</div>
+              <div style="color:var(--text-muted);">${guestPhone}</div>
+            </div>
+            <div>
+              <div style="color:var(--text-dim); font-size:0.75rem; text-transform:uppercase;">Trip Place Destination</div>
+              <div style="font-weight:600; color:#fff;">${hotelName}</div>
+              <div style="color:var(--text-muted);">${hotelAddress}</div>
+              <div style="color:var(--accent-gold); font-weight:500;">${roomType}</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:var(--radius-sm); padding:0.8rem; margin-bottom:1.2rem; font-size:0.85rem;">
+            <div><strong>Check-in:</strong><br>${b.check_in}</div>
+            <div><strong>Check-out:</strong><br>${b.check_out}</div>
+            <div><strong>Duration:</strong><br>${b.total_nights || 1} nights (${b.num_guests || 1} Guests)</div>
+          </div>
+
+          <div style="border-top:1px dashed var(--border-glass); padding-top:0.8rem; font-size:0.88rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+              <span style="color:var(--text-muted);">Base Room Tariff:</span>
+              <span>$${((b.price_per_night || 0) * (b.total_nights || 1)).toFixed(2)}</span>
+            </div>
+            ${b.discount_amount ? `
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; color:#34d399;">
+                <span>Promotional Discount:</span>
+                <span>-$${parseFloat(b.discount_amount).toFixed(2)}</span>
+              </div>
+            ` : ''}
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; color:var(--text-muted);">
+              <span>Statutory Luxury GST (12%):</span>
+              <span>$${(b.tax_amount || 0).toFixed(2)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:1.15rem; font-weight:700; color:#fff; border-top:1px solid var(--border-glass); padding-top:0.6rem;">
+              <span>Total Paid Amount:</span>
+              <span style="color:var(--accent-gold);">$${(b.total_amount || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("ticket-folio-content").innerHTML = html;
+      document.getElementById("modal-ticket-folio").style.display = "flex";
+    }
+
+    // =========================================================================
+    // SECTION 3: MANAGE TRIP PLACES
+    // =========================================================================
+    function renderPlacesGrid(hotels) {
+      const container = document.getElementById("admin-places-grid");
+      if (!hotels.length) {
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-dim);">No trip places found.</div>`;
+        return;
+      }
+
+      container.innerHTML = hotels.map(h => `
+        <div class="luxury-card" style="display:flex; flex-direction:column;">
+          <div class="card-img-wrap" style="height:190px;">
+            <img src="${(h.images && h.images[0]) || 'https://images.unsplash.com/photo-1566073771259-6a8506099945'}" alt="${h.name}">
+            <div class="card-badge">
+              <i class="fa-solid fa-star" style="color:#f59e0b;"></i> ${h.star_rating}
+            </div>
+          </div>
+          <div class="card-body" style="flex:1; display:flex; flex-direction:column;">
+            <div class="card-location">
+              <i class="fa-solid fa-location-dot"></i> ${h.city}, ${h.state || 'Tamil Nadu'}
+            </div>
+            <h3 class="card-title" style="font-size:1.15rem; margin-bottom:0.4rem;">${h.name}</h3>
+            <p class="card-desc" style="font-size:0.84rem; flex:1;">${(h.description || '').slice(0, 110)}...</p>
+            
+            <div class="amenities-tags" style="margin: 0.8rem 0;">
+              ${(h.amenities || []).slice(0, 3).map(a => `<span class="tag" style="font-size:0.75rem;">${a}</span>`).join('')}
+            </div>
+
+            <div class="card-footer" style="padding-top:0.8rem; border-top:1px solid var(--border-glass); margin-top:auto;">
+              <div class="price-box">
+                <span class="price-label">Rates From</span>
+                <span class="price-value" style="font-size:1.1rem;">$${h.starting_price || 280} <span style="font-size:0.75rem;">/night</span></span>
+              </div>
+              <div style="display:flex; gap:0.4rem; align-items:center;">
+                <button onclick="filterAndShowSuitesForHotel('${h.id}')" class="btn btn-outline btn-sm" title="Manage Suites for this Hotel" style="padding:0.35rem 0.6rem; font-size:0.8rem;">
+                  <i class="fa-solid fa-bed"></i> Suites
+                </button>
+                <button onclick="openEditPlaceModal('${h.id}')" class="btn btn-outline btn-sm" title="Edit Trip Place" style="padding:0.35rem 0.55rem;">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="handleDeletePlace('${h.id}', '${h.name}')" class="btn btn-danger btn-sm" title="Delete Place" style="padding:0.35rem 0.55rem;">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterPlacesGrid() {
+      const city = document.getElementById("filter-place-city").value;
+      const filtered = allHotels.filter(h => {
+        if (city !== "all" && h.city !== city) return false;
+        return true;
+      });
+      renderPlacesGrid(filtered);
+    }
+
+    function openAddPlaceModal() {
+      document.getElementById("modal-place-title").innerHTML = `<i class="fa-solid fa-hotel" style="color:var(--accent-gold);"></i> Add New Trip Place`;
+      document.getElementById("place-edit-id").value = "";
+      document.getElementById("place-name").value = "";
+      document.getElementById("place-city").value = "Chennai";
+      document.getElementById("place-address").value = "";
+      document.getElementById("place-rating").value = "4.8";
+      document.getElementById("place-rate").value = "280";
+      document.getElementById("place-default-suite").value = "Royal Heritage Ocean Suite";
+      document.getElementById("place-description").value = "";
+      document.getElementById("modal-trip-place").style.display = "flex";
+    }
+
+    function openEditPlaceModal(hotelId) {
+      const h = allHotels.find(x => x.id === hotelId);
+      if (!h) return;
+
+      document.getElementById("modal-place-title").innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--accent-gold);"></i> Edit Trip Place: ${h.name}`;
+      document.getElementById("place-edit-id").value = h.id;
+      document.getElementById("place-name").value = h.name || "";
+      document.getElementById("place-city").value = h.city || "Chennai";
+      document.getElementById("place-address").value = h.address || "";
+      document.getElementById("place-rating").value = h.star_rating || 4.8;
+      document.getElementById("place-rate").value = h.starting_price || 280;
+      document.getElementById("place-image").value = (h.images && h.images[0]) || "";
+      document.getElementById("place-amenities").value = (h.amenities || []).join(", ");
+      document.getElementById("place-description").value = h.description || "";
+      document.getElementById("modal-trip-place").style.display = "flex";
+    }
+
+    async function handleSaveTripPlace(e) {
+      e.preventDefault();
+      const editId = document.getElementById("place-edit-id").value;
+      const name = document.getElementById("place-name").value.trim();
+      const city = document.getElementById("place-city").value;
+      const state = document.getElementById("place-state").value;
+      const address = document.getElementById("place-address").value.trim();
+      const star_rating = parseFloat(document.getElementById("place-rating").value);
+      const starting_price = parseFloat(document.getElementById("place-rate").value);
+      const default_suite_name = document.getElementById("place-default-suite").value.trim();
+      const image_url = document.getElementById("place-image").value.trim();
+      const amenitiesStr = document.getElementById("place-amenities").value;
+      const description = document.getElementById("place-description").value.trim();
+
+      const amenities = amenitiesStr.split(",").map(a => a.trim()).filter(a => a.length > 0);
+      const images = image_url ? [image_url] : ["https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80"];
+
+      const payload = {
+        name,
+        city,
+        state,
+        country: "India",
+        address,
+        star_rating,
+        starting_price,
+        default_suite_name,
+        images,
+        amenities,
+        description
+      };
+
+      try {
+        if (editId) {
+          // Update existing
+          const res = await apiRequest(`/hotels/${editId}`, "PUT", payload, true);
+          if (res.success) {
+            showToast("Trip place updated successfully.", "success");
+            closeModal("modal-trip-place");
+            await refreshDashboardData();
+          }
+        } else {
+          // Add new
+          const res = await apiRequest("/admin/hotels", "POST", payload, true);
+          if (res.success) {
+            showToast("New trip place added to portfolio.", "success");
+            closeModal("modal-trip-place");
+            await refreshDashboardData();
+          }
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to save trip place.", "error");
+      }
+    }
+
+    async function handleDeletePlace(hotelId, hotelName) {
+      if (!confirm(`Are you sure you want to delete '${hotelName}' from trip places? This cannot be undone.`)) return;
+      try {
+        const res = await apiRequest(`/hotels/${hotelId}`, "DELETE", null, true);
+        if (res.success) {
+          showToast("Trip place deleted successfully.", "success");
+          await refreshDashboardData();
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to delete place", "error");
+      }
+    }
+
+    // =========================================================================
+    // SECTION 4: MANAGE SUITES
+    // =========================================================================
+    function renderSuitesTable(suites) {
+      const tbody = document.getElementById("suites-table-body");
+      if (!suites.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-dim);">No suites found matching the filter criteria.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = suites.map(s => {
+        const isAvailable = s.is_available !== false;
+        const statusClass = isAvailable ? "status-confirmed" : "status-cancelled";
+        const statusText = isAvailable ? "Active & Bookable" : "Maintenance";
+        const activeBookings = s.active_bookings || 0;
+        const hotelName = s.hotel_name || "Tamil Nadu Hotel";
+        const hotelCity = s.hotel_city || "Tamil Nadu";
+        const coverImg = (s.images && s.images[0]) || "https://images.unsplash.com/photo-1590490360182-c33d57733427";
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:0.8rem;">
+                <div style="width:48px; height:48px; border-radius:var(--radius-sm); overflow:hidden; flex-shrink:0; border:1px solid var(--border-glass);">
+                  <img src="${coverImg}" alt="${s.room_type}" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                  <div style="font-weight:600; color:#fff;">${s.room_type}</div>
+                  <div style="color:var(--accent-gold); font-size:0.8rem;">
+                    <i class="fa-solid fa-door-open"></i> Room ${s.room_number || '--'}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div style="color:#fff; font-weight:500;">${hotelName}</div>
+              <div style="color:var(--text-dim); font-size:0.8rem;"><i class="fa-solid fa-location-dot"></i> ${hotelCity}</div>
+            </td>
+            <td>
+              <strong style="color:var(--accent-gold); font-size:1.05rem;">$${s.price_per_night}</strong>
+              <span style="color:var(--text-dim); font-size:0.75rem;">/night</span>
+            </td>
+            <td>
+              <div style="color:#fff; font-size:0.85rem;"><i class="fa-solid fa-users"></i> Up to ${s.capacity || 2} Guests</div>
+              <div style="color:var(--text-muted); font-size:0.8rem;"><i class="fa-solid fa-bed"></i> ${s.bed_type || 'King Size Bed'}</div>
+            </td>
+            <td>
+              <span class="status-pill ${statusClass}">${statusText}</span>
+            </td>
+            <td>
+              <strong style="color:${activeBookings > 0 ? '#34d399' : 'var(--text-dim)'};">${activeBookings}</strong>
+              <span style="color:var(--text-dim); font-size:0.78rem;">stay(s)</span>
+            </td>
+            <td style="text-align:right; white-space:nowrap;">
+              <button onclick="openAdminEditSuiteModal('${s.id}')" class="btn btn-gold btn-sm" title="Manage Suite Details" style="padding:0.35rem 0.75rem; font-size:0.82rem;">
+                <i class="fa-solid fa-sliders"></i> Manage Suite
+              </button>
+              <button onclick="handleDeleteSuite('${s.id}', '${s.room_type}')" class="btn btn-danger btn-sm" title="Delete Suite" style="padding:0.35rem 0.55rem; font-size:0.82rem; margin-left:3px;">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterSuitesTable() {
+      const q = (document.getElementById("search-suites-input").value || "").toLowerCase();
+      const hotelId = document.getElementById("filter-suite-hotel").value;
+      const status = document.getElementById("filter-suite-status").value;
+
+      const filtered = allRooms.filter(s => {
+        if (hotelId !== "all" && s.hotel_id !== hotelId) return false;
+        if (status === "available" && s.is_available === false) return false;
+        if (status === "maintenance" && s.is_available !== false) return false;
+
+        if (!q) return true;
+        const name = (s.room_type || "").toLowerCase();
+        const num = (s.room_number || "").toLowerCase();
+        const hotel = (s.hotel_name || "").toLowerCase();
+        const bed = (s.bed_type || "").toLowerCase();
+        const feats = (s.features || []).join(" ").toLowerCase();
+
+        return name.includes(q) || num.includes(q) || hotel.includes(q) || bed.includes(q) || feats.includes(q);
+      });
+
+      renderSuitesTable(filtered);
+    }
+
+    function populateAdminSuiteHotelSelects() {
+      const filterSelect = document.getElementById("filter-suite-hotel");
+      const modalSelect = document.getElementById("admin-suite-hotel-id");
+      if (!filterSelect || !modalSelect) return;
+
+      const currentFilter = filterSelect.value;
+      const currentModal = modalSelect.value;
+
+      let filterHtml = '<option value="all">All Trip Places / Properties</option>';
+      let modalHtml = '';
+
+      allHotels.forEach(h => {
+        filterHtml += `<option value="${h.id}">${h.name} (${h.city})</option>`;
+        modalHtml += `<option value="${h.id}">${h.name} (${h.city})</option>`;
+      });
+
+      filterSelect.innerHTML = filterHtml;
+      modalSelect.innerHTML = modalHtml;
+
+      if (currentFilter && filterSelect.querySelector(`option[value="${currentFilter}"]`)) {
+        filterSelect.value = currentFilter;
+      }
+      if (currentModal && modalSelect.querySelector(`option[value="${currentModal}"]`)) {
+        modalSelect.value = currentModal;
+      }
+    }
+
+    function filterAndShowSuitesForHotel(hotelId) {
+      switchAdminTab('suites');
+      const hotelSelect = document.getElementById("filter-suite-hotel");
+      if (hotelSelect) {
+        hotelSelect.value = hotelId;
+        filterSuitesTable();
+      }
+    }
+
+    function openAdminAddSuiteModal() {
+      document.getElementById("modal-admin-suite-title").innerHTML = `<i class="fa-solid fa-plus" style="color:var(--accent-gold);"></i> Add New Luxury Suite`;
+      document.getElementById("admin-suite-edit-id").value = "";
+      document.getElementById("admin-suite-name").value = "";
+      document.getElementById("admin-suite-number").value = "";
+      document.getElementById("admin-suite-price").value = 280;
+      document.getElementById("admin-suite-capacity").value = 2;
+      document.getElementById("admin-suite-bed").value = "King Size Bed";
+      document.getElementById("admin-suite-available").value = "true";
+      document.getElementById("admin-suite-image").value = "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80";
+      document.getElementById("admin-suite-features").value = "Panoramic Balcony, Italian Marble Bathroom, Rain Shower, Free High-Speed WiFi";
+      document.getElementById("btn-admin-delete-suite").style.display = "none";
+
+      populateAdminSuiteHotelSelects();
+      document.getElementById("modal-admin-suite").style.display = "flex";
+    }
+
+    function openAdminEditSuiteModal(roomId) {
+      const room = allRooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      document.getElementById("modal-admin-suite-title").innerHTML = `<i class="fa-solid fa-sliders" style="color:var(--accent-gold);"></i> Manage Suite: ${room.room_type}`;
+      document.getElementById("admin-suite-edit-id").value = room.id;
+      document.getElementById("admin-suite-name").value = room.room_type || "";
+      document.getElementById("admin-suite-number").value = room.room_number || "";
+      document.getElementById("admin-suite-price").value = room.price_per_night || 250;
+      document.getElementById("admin-suite-capacity").value = room.capacity || 2;
+      document.getElementById("admin-suite-bed").value = room.bed_type || "King Size Bed";
+      document.getElementById("admin-suite-available").value = room.is_available !== false ? "true" : "false";
+      document.getElementById("admin-suite-image").value = (room.images && room.images[0]) || "";
+      document.getElementById("admin-suite-features").value = (room.features || []).join(", ");
+
+      populateAdminSuiteHotelSelects();
+      if (room.hotel_id) {
+        document.getElementById("admin-suite-hotel-id").value = room.hotel_id;
+      }
+
+      document.getElementById("btn-admin-delete-suite").style.display = "inline-flex";
+      document.getElementById("modal-admin-suite").style.display = "flex";
+    }
+
+    async function handleSaveAdminSuite(e) {
+      e.preventDefault();
+      const editId = document.getElementById("admin-suite-edit-id").value;
+      const room_type = document.getElementById("admin-suite-name").value.trim();
+      const hotel_id = document.getElementById("admin-suite-hotel-id").value;
+      const room_number = document.getElementById("admin-suite-number").value.trim();
+      const price_per_night = parseFloat(document.getElementById("admin-suite-price").value);
+      const capacity = parseInt(document.getElementById("admin-suite-capacity").value);
+      const bed_type = document.getElementById("admin-suite-bed").value.trim();
+      const is_available = document.getElementById("admin-suite-available").value === "true";
+      const image_url = document.getElementById("admin-suite-image").value.trim();
+      const featuresStr = document.getElementById("admin-suite-features").value;
+
+      const features = featuresStr.split(",").map(f => f.trim()).filter(f => f.length > 0);
+      const images = image_url ? [image_url] : ["https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80"];
+
+      const payload = {
+        hotel_id,
+        room_number,
+        room_type,
+        price_per_night,
+        capacity,
+        bed_type,
+        is_available,
+        images,
+        features
+      };
+
+      try {
+        if (editId) {
+          const res = await apiRequest(`/admin/rooms/${editId}`, "PUT", payload, true);
+          if (res.success) {
+            showToast("Suite details updated successfully.", "success");
+            closeModal("modal-admin-suite");
+            await refreshDashboardData();
+          }
+        } else {
+          const res = await apiRequest("/admin/rooms", "POST", payload, true);
+          if (res.success) {
+            showToast("New suite added successfully.", "success");
+            closeModal("modal-admin-suite");
+            await refreshDashboardData();
+          }
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to save suite.", "error");
+      }
+    }
+
+    async function deleteCurrentAdminSuite() {
+      const editId = document.getElementById("admin-suite-edit-id").value;
+      const roomName = document.getElementById("admin-suite-name").value;
+      if (!editId) return;
+      await handleDeleteSuite(editId, roomName);
+      closeModal("modal-admin-suite");
+    }
+
+    async function handleDeleteSuite(roomId, roomName) {
+      if (!confirm(`Are you sure you want to delete suite '${roomName}'? This accommodation will no longer be bookable.`)) return;
+      try {
+        const res = await apiRequest(`/admin/rooms/${roomId}`, "DELETE", null, true);
+        if (res.success) {
+          showToast("Suite removed successfully.", "success");
+          await refreshDashboardData();
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to delete suite.", "error");
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    // Close modal on background click
+    window.onclick = function(e) {
+      if (e.target.classList.contains("admin-modal-overlay")) {
+        e.target.style.display = "none";
+      }
+    };
+  </script>
+</body>
+</html>

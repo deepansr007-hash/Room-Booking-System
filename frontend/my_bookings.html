@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Reservations | Aura Grand Luxury Hotels</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="hotels.html">Hotels</a></li>
+        <li class="nav-item"><a href="rooms.html">Suites & Rooms</a></li>
+        <li class="nav-item active"><a href="my_bookings.html">My Reservations</a></li>
+      </ul>
+      <div id="nav-auth-container" class="nav-auth"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <span class="section-tag">Guest Portfolio</span>
+      <h1 class="section-title">My Travel Reservations</h1>
+      <p class="section-desc">Manage upcoming luxury itineraries, inspect official receipts, or adjust reservation statuses.</p>
+    </div>
+
+    <!-- Bookings Listing Container -->
+    <div id="bookings-list-container">
+      <!-- Populated dynamically -->
+    </div>
+  </main>
+
+  <!-- Official Invoice / Receipt Modal -->
+  <div id="receipt-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeReceiptModal()">&times;</button>
+      <div style="text-align:center;margin-bottom:1.5rem;border-bottom:1px solid var(--border-glass);padding-bottom:1rem;">
+        <div class="brand-logo" style="justify-content:center;margin-bottom:0.5rem;">
+          <i class="fa-solid fa-gem"></i>
+          <span>AURA GRAND</span>
+        </div>
+        <p style="color:var(--text-dim);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;">Official Guest Folio & Tax Invoice</p>
+      </div>
+
+      <div id="receipt-details-content">
+        <!-- Injected via JS -->
+      </div>
+
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button onclick="window.print()" class="btn btn-gold btn-sm">
+          <i class="fa-solid fa-print"></i> Print Folio / Receipt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Aura Grand Hotel Group Ltd. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    async function loadMyBookings() {
+      const container = document.getElementById("bookings-list-container");
+
+      if (!Auth.isLoggedIn()) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:5rem 2rem;background:var(--bg-card);border-radius:var(--radius-lg);border:1px dashed var(--border-glass);max-width:600px;margin:0 auto;">
+            <i class="fa-solid fa-user-lock fa-3x" style="color:var(--accent-gold);margin-bottom:1.2rem;"></i>
+            <h2 style="font-family:var(--font-serif);margin-bottom:0.5rem;">Member Authentication Required</h2>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.95rem;">Please sign in to retrieve your private reservations and invoices.</p>
+            <a href="login.html?redirect=my_bookings.html" class="btn btn-gold">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Account
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const currentUser = Auth.getUser();
+      if (currentUser && currentUser.role === "admin") {
+        container.innerHTML = `
+          <div style="text-align:center;padding:4.5rem 2rem;background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border-glass);max-width:650px;margin:0 auto;box-shadow:var(--shadow-md);">
+            <div style="font-size:3rem;color:var(--accent-gold);margin-bottom:1rem;"><i class="fa-solid fa-shield-halved"></i></div>
+            <h2 style="font-family:var(--font-serif);font-size:1.8rem;margin-bottom:0.8rem;">Administrator Management Account</h2>
+            <p style="color:var(--text-muted);margin-bottom:2rem;font-size:0.95rem;line-height:1.6;">
+              As an Executive Administrator, customer room bookings are monitored and managed in the <strong>Admin Portal &rarr; Customer Booked Tickets</strong>.
+            </p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+              <a href="admin.html" class="btn btn-gold">
+                <i class="fa-solid fa-gauge-high"></i> Open Admin Portal
+              </a>
+              <a href="index.html" class="btn btn-outline">
+                <i class="fa-solid fa-house"></i> Return to Home
+              </a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div style="text-align: center; color: var(--text-dim); padding: 4rem;">
+          <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+          <p style="margin-top: 1rem;">Loading your reservations...</p>
+        </div>
+      `;
+
+      let bookings = [];
+      try {
+        const res = await apiRequest("/bookings/my-bookings", "GET", null, true);
+        if (res.success) bookings = res.bookings;
+      } catch (e) {
+        bookings = [];
+      }
+
+      if (!bookings.length) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:5rem 2rem;background:var(--bg-card);border-radius:var(--radius-lg);border:1px dashed var(--border-glass);max-width:600px;margin:0 auto;">
+            <i class="fa-solid fa-calendar-xmark fa-3x" style="color:var(--text-dim);margin-bottom:1.2rem;"></i>
+            <h2 style="font-family:var(--font-serif);margin-bottom:0.5rem;">No Active Reservations</h2>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.95rem;">You do not currently have any scheduled stays with Aura Grand.</p>
+            <a href="hotels.html" class="btn btn-gold">
+              <i class="fa-solid fa-compass"></i> Explore Sanctuaries
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+          ${bookings.map(b => {
+            const hotelName = (b.hotel && b.hotel.name) || "Grand Azure Luxury Resort";
+            const hotelLoc = (b.hotel && (b.hotel.city + ", " + b.hotel.country)) || "French Riviera";
+            const roomType = (b.room && b.room.room_type) || "Deluxe Suite";
+            const roomNum = (b.room && b.room.room_number) || "101";
+            const statusClass = b.status === "confirmed" ? "confirmed" : b.status === "cancelled" ? "cancelled" : "pending";
+
+            return `
+              <div class="luxury-card" style="padding:1.8rem;display:flex;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;">
+                <div style="flex:1;min-width:280px;">
+                  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+                    <span class="status-badge ${statusClass}">
+                      <i class="fa-solid ${b.status === 'confirmed' ? 'fa-check' : b.status === 'cancelled' ? 'fa-xmark' : 'fa-clock'}"></i>
+                      ${b.status}
+                    </span>
+                    <span style="color:var(--text-dim);font-size:0.85rem;font-family:monospace;">${b.booking_code}</span>
+                  </div>
+                  <h3 style="font-family:var(--font-serif);font-size:1.4rem;color:#fff;margin-bottom:0.25rem;">${hotelName}</h3>
+                  <div style="color:var(--accent-gold);font-size:0.85rem;margin-bottom:0.6rem;">
+                    <i class="fa-solid fa-location-dot"></i> ${hotelLoc}
+                  </div>
+                  <div style="font-size:0.9rem;color:var(--text-muted);">
+                    <i class="fa-solid fa-bed"></i> ${roomType} (${roomNum}) &bull; ${b.num_guests} Guests &bull; ${b.total_nights} Nights
+                  </div>
+                </div>
+
+                <div style="text-align:right;min-width:180px;">
+                  <div style="font-size:0.8rem;color:var(--text-dim);">Reservation Dates</div>
+                  <div style="font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.5rem;">
+                    ${b.check_in} &rarr; ${b.check_out}
+                  </div>
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--accent-gold-light);">
+                    $${b.total_amount}
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:0.75rem;width:100%;border-top:1px solid var(--border-glass);padding-top:1rem;justify-content:flex-end;">
+                  <button onclick='viewReceipt(${JSON.stringify(b)})' class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-file-invoice"></i> View Folio / Invoice
+                  </button>
+                  ${b.status !== "cancelled" ? `
+                    <button onclick="cancelBooking('${b.id}')" class="btn btn-danger btn-sm">
+                      <i class="fa-solid fa-ban"></i> Cancel Reservation
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    async function cancelBooking(bookingId) {
+      if (!confirm("Are you sure you wish to cancel this luxury reservation?")) return;
+
+      try {
+        const res = await apiRequest(`/bookings/${bookingId}/cancel`, "POST", null, true);
+        if (res.success) {
+          showToast("Reservation cancelled successfully.", "info");
+          loadMyBookings();
+        }
+      } catch (err) {
+        showToast(err.message || "Unable to cancel booking.", "error");
+      }
+    }
+
+    function viewReceipt(b) {
+      const modal = document.getElementById("receipt-modal");
+      const content = document.getElementById("receipt-details-content");
+
+      const hotelName = (b.hotel && b.hotel.name) || "Grand Azure Luxury Resort";
+      const roomType = (b.room && b.room.room_type) || "Deluxe Suite";
+      const user = Auth.getUser() || { name: "Sophia Reynolds", email: "sophia@example.com" };
+
+      content.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;font-size:0.88rem;">
+          <div>
+            <div style="color:var(--text-dim);">Billed To:</div>
+            <strong style="color:#fff;">${user.name}</strong><br>
+            <span style="color:var(--text-muted);">${user.email}</span>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:var(--text-dim);">Reservation Code:</div>
+            <strong style="color:var(--accent-gold);">${b.booking_code}</strong><br>
+            <span style="color:var(--text-muted);">Status: ${b.status.toUpperCase()}</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.2rem;font-size:0.88rem;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+            <span>Property</span>
+            <strong>${hotelName}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+            <span>Accommodation</span>
+            <strong>${roomType}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+            <span>Check-in Date</span>
+            <strong>${b.check_in}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+            <span>Check-out Date</span>
+            <strong>${b.check_out}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border-glass);padding-top:0.75rem;margin-top:0.75rem;font-size:1.05rem;">
+            <span style="font-weight:700;">Settled Total</span>
+            <strong style="color:var(--accent-gold-light);">$${b.total_amount}</strong>
+          </div>
+        </div>
+
+        <div style="font-size:0.78rem;color:var(--text-dim);text-align:center;">
+          Transaction settled via Encrypted Gateway &bull; Thank you for choosing Aura Grand Hotels.
+        </div>
+      `;
+
+      modal.classList.add("active");
+    }
+
+    function closeReceiptModal() {
+      document.getElementById("receipt-modal").classList.remove("active");
+    }
+
+    document.addEventListener("DOMContentLoaded", loadMyBookings);
+  </script>
+</body>
+</html>

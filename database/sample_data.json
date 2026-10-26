@@ -1,0 +1,241 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_001",
+      "name": "Alexander Wright",
+      "email": "admin@grandcoromandel.in",
+      "password_hash": "scrypt:32768:8:1$Z1OHHnDDiHweqBII$2a200ae61344e4188f84e1f14f1b1b797756b99b7e067a61046451a06d22e574a34932172fc0619288fa12668e0e86ed908c5e898ea093cc481c0cccab9cbe2d",
+      "phone": "+91-44-2744-4001",
+      "role": "admin",
+      "created_at": "2026-01-10T09:00:00Z",
+      "updated_at": "2026-01-10T09:00:00Z"
+    },
+    {
+      "id": "usr_admin_002",
+      "name": "Alexander Wright",
+      "email": "admin@grandazure.com",
+      "password_hash": "scrypt:32768:8:1$cyTDi8J7vNwjUqHT$7bb6371ca0c66c94ae73df1426b7d31e6eeddd3a0c3aa3fba8f9f27188f4fa9a65c2c7db1ce1b05f8ffbcadf9a5b492763dab65025d31cf4346bc96967783add",
+      "phone": "+91-44-2744-4002",
+      "role": "admin",
+      "created_at": "2026-01-10T09:00:00Z",
+      "updated_at": "2026-01-10T09:00:00Z"
+    },
+    {
+      "id": "usr_guest_002",
+      "name": "Sophia Reynolds",
+      "email": "sophia@example.com",
+      "password_hash": "scrypt:32768:8:1$pB5cByllvKYP4qFe$447caa68cfef09fb01fbf7e50f336ad7953b4faadb7fbfa0339a6b15da2f0cd42893def995a3d7752c862a4525433c90575d88927727f973e002d12ab4702fc2",
+      "phone": "+91-98401-23456",
+      "role": "guest",
+      "created_at": "2026-02-14T11:20:00Z",
+      "updated_at": "2026-02-14T11:20:00Z"
+    }
+  ],
+  "hotels": [
+    {
+      "id": "htl_001",
+      "name": "The Grand Coromandel Bay Luxury Palace & Spa",
+      "description": "Commanding breathtaking vistas of the Bay of Bengal along Chennai's scenic East Coast Road, The Grand Coromandel Bay combines Dravidian architectural grandeur with bespoke 5-star hospitality, infinity oceanfront pools, coastal Chettinad gourmet dining, and private beach cabanas.",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "address": "1/523 East Coast Road, Covelong Beach, Chennai, Tamil Nadu 603112",
+      "star_rating": 4.9,
+      "images": [
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "amenities": ["Oceanfront Infinity Pool", "Private Beach Access", "Ayurvedic & Lotus Spa", "Chettinad Gourmet Dining", "Free High-Speed WiFi", "Valet Parking", "24/7 Royal Butler"],
+      "contact_email": "reservations@grandcoromandel.in",
+      "contact_phone": "+91 44 2744 4000",
+      "created_at": "2026-01-01T08:00:00Z"
+    },
+    {
+      "id": "htl_002",
+      "name": "The Savoy Nilgiri Mist Heritage Retreat",
+      "description": "Nestled amidst rolling tea plantations and eucalyptus misty hills in the Nilgiris, this colonial-era heritage estate features wood-burning fireplaces, manicured rose gardens, horseback riding trails, and English high tea served on terrace lawns.",
+      "city": "Ooty",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "address": "77 Sylks Road, Elk Hill, Ooty, Nilgiris, Tamil Nadu 643001",
+      "star_rating": 4.8,
+      "images": [
+        "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "amenities": ["Colonial Rose Gardens", "Tea Estate Trails", "Wood Fireplace Lounge", "Nilgiri Aroma Spa", "Free High-Speed WiFi", "Horseback Riding", "Fine Dining Pavilion"],
+      "contact_email": "stay@savoynilgiri.in",
+      "contact_phone": "+91 423 244 4142",
+      "created_at": "2026-01-02T10:30:00Z"
+    },
+    {
+      "id": "htl_003",
+      "name": "Tamara Pine & Mist Lake Sanctuary",
+      "description": "Perched on the verdant slopes overlooking Kodaikanal's tranquil lake and pine forests, this modern eco-luxury sanctuary offers cantilevered valley balconies, temperature-controlled cliffside pools, stargazing domes, and farm-to-table organic dining.",
+      "city": "Kodaikanal",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "address": "22 La Providence, Upper Lake Road, Kodaikanal, Tamil Nadu 624101",
+      "star_rating": 4.9,
+      "images": [
+        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "amenities": ["Cliffside Heated Pool", "Lakeview Observatory", "Pine Forest Nature Trails", "Organic Hydroponic Bistro", "Ayurvedic Wellness Spa", "Smart Suite Automation"],
+      "contact_email": "concierge@tamarapinewood.in",
+      "contact_phone": "+91 4542 248 800",
+      "created_at": "2026-01-03T12:00:00Z"
+    },
+    {
+      "id": "htl_004",
+      "name": "The Heritage Madurai Royal Sanctuary & Gardens",
+      "description": "Designed by legendary architect Geoffrey Bawa, this 17-acre sanctuary celebrates rich Pandyan heritage with banyan-shaded courtyards, traditional stone colonnades, a temple-tank-inspired Olympic pool, and authentic South Indian culinary feasts.",
+      "city": "Madurai",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "address": "61 Melakkal Main Road, Kochadai, Madurai, Tamil Nadu 625016",
+      "star_rating": 4.8,
+      "images": [
+        "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "amenities": ["Temple Tank Olympic Pool", "Geoffrey Bawa Architecture", "Ayurvedic Healing Center", "Traditional Music Evenings", "Complimentary High-speed WiFi", "Cultural Concierge Tours"],
+      "contact_email": "reservations@heritagemadurai.in",
+      "contact_phone": "+91 452 238 5455",
+      "created_at": "2026-01-04T14:15:00Z"
+    },
+    {
+      "id": "htl_005",
+      "name": "Shore Temple Bayview Heritage Eco-Resort",
+      "description": "Overlooking the UNESCO world heritage monolithic shore temples and golden beaches, offering thatched beachside villas, sea breeze cabanas, catamaran coastal sailing, and fresh seafood barbecue on the sands.",
+      "city": "Mahabalipuram",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "address": "57 Kovalam Road, Shore Temple Coast, Mahabalipuram, Tamil Nadu 603104",
+      "star_rating": 4.9,
+      "images": [
+        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "amenities": ["Private Beach Frontage", "Shore Temple Ocean Walkway", "Catamaran Coastal Sailing", "Seafood BBQ Shack", "Surf Club & Infinity Lagoon"],
+      "contact_email": "stay@shoretemplebay.in",
+      "contact_phone": "+91 44 2744 3211",
+      "created_at": "2026-01-05T10:00:00Z"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "rm_101",
+      "hotel_id": "htl_001",
+      "room_number": "Coromandel-101",
+      "room_type": "Deluxe Coromandel Ocean Suite",
+      "price_per_night": 320.00,
+      "capacity": 2,
+      "bed_type": "King Size Bed",
+      "images": [
+        "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Private Sea Balcony", "Italian Marble Bathroom", "Rain Shower", "Artisanal South Indian Filter Coffee Bar", "Complimentary High-speed WiFi", "Safe Deposit"],
+      "is_available": true,
+      "created_at": "2026-01-05T09:00:00Z"
+    },
+    {
+      "id": "rm_102",
+      "hotel_id": "htl_001",
+      "room_number": "Coromandel-Penthouse",
+      "room_type": "Presidential Bayview Penthouse",
+      "price_per_night": 750.00,
+      "capacity": 4,
+      "bed_type": "2 King Beds + Lounge",
+      "images": [
+        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Private Rooftop Jacuzzi", "Panoramic 360 Bay View", "Dedicated Butler", "Dravidian Teak Wood Carvings", "Walk-in Dressing Suite", "Designer Toiletries"],
+      "is_available": true,
+      "created_at": "2026-01-05T09:30:00Z"
+    },
+    {
+      "id": "rm_201",
+      "hotel_id": "htl_002",
+      "room_number": "Nilgiri-201",
+      "room_type": "Colonial Heritage Fireplace Suite",
+      "price_per_night": 280.00,
+      "capacity": 2,
+      "bed_type": "Four-Poster Royal King Bed",
+      "images": [
+        "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Original Stone Fireplace", "Tea Garden Verandah", "Clawfoot Soaking Tub", "Pure Cashmere Throws", "Organic Nilgiri Tea Selection"],
+      "is_available": true,
+      "created_at": "2026-01-05T10:00:00Z"
+    },
+    {
+      "id": "rm_202",
+      "hotel_id": "htl_002",
+      "room_number": "Nilgiri-205",
+      "room_type": "Royal Nilgiri Family Chalet",
+      "price_per_night": 420.00,
+      "capacity": 4,
+      "bed_type": "1 King Bed + 2 Twin Beds",
+      "images": [
+        "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Two Interconnected Bedrooms", "Private Valley View Deck", "Heated Pine Flooring", "Antique Teak Woodworks", "Butler Call Service"],
+      "is_available": true,
+      "created_at": "2026-01-05T10:15:00Z"
+    },
+    {
+      "id": "rm_301",
+      "hotel_id": "htl_003",
+      "room_number": "Tamara-301",
+      "room_type": "Pine Valley Panoramic Suite",
+      "price_per_night": 310.00,
+      "capacity": 2,
+      "bed_type": "Custom Ergonomic King",
+      "images": [
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Floor-to-Ceiling Valley Windows", "Private Pine Deck", "Smart Climate Automation Hub", "Handcrafted Bean-to-Cup Coffee", "Acoustic Noise-Shielded Bedroom"],
+      "is_available": true,
+      "created_at": "2026-01-05T11:00:00Z"
+    },
+    {
+      "id": "rm_401",
+      "hotel_id": "htl_004",
+      "room_number": "Pandyan-401",
+      "room_type": "Pandyan Royal Courtyard Villa",
+      "price_per_night": 340.00,
+      "capacity": 3,
+      "bed_type": "1 King Bed + 1 Daybed",
+      "images": [
+        "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Private Open-Air Plunge Pool", "Open Sky Shower & Courtyard", "Brass Artifacts & Teak Columns", "Handwoven Cotton Linen", "Complimentary Temple Tour Guide"],
+      "is_available": true,
+      "created_at": "2026-01-05T11:30:00Z"
+    },
+    {
+      "id": "rm_501",
+      "hotel_id": "htl_005",
+      "room_number": "Shore-501",
+      "room_type": "Coromandel Shore Villa",
+      "price_per_night": 360.00,
+      "capacity": 2,
+      "bed_type": "Handcrafted Teak King Bed",
+      "images": [
+        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1000&q=80"
+      ],
+      "features": ["Direct Beach Access", "Private Sun Deck", "Outdoor Rain Bath", "Hammock Garden", "Sea Breeze Ventilation Architecture"],
+      "is_available": true,
+      "created_at": "2026-01-05T12:00:00Z"
+    }
+  ],
+  "bookings": [],
+  "payments": []
+}

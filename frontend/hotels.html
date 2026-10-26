@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Luxury Properties & Hotels | Aura Grand</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="index.html">Home</a></li>
+        <li class="nav-item active"><a href="hotels.html">Hotels</a></li>
+        <li class="nav-item"><a href="rooms.html">Suites & Rooms</a></li>
+        <li class="nav-item"><a href="my_bookings.html">My Reservations</a></li>
+      </ul>
+      <div id="nav-auth-container" class="nav-auth"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <span class="section-tag">Tamil Nadu Sanctuaries</span>
+      <h1 class="section-title">Explore Premier Hotel Destinations</h1>
+      <p class="section-desc">From sun-drenched Coromandel coasts to misty Nilgiri tea hills, pine valleys, and ancient Pandyan palaces.</p>
+    </div>
+
+    <!-- Filter Control Bar -->
+    <div class="search-widget" style="margin-bottom: 3.5rem;">
+      <div class="widget-group">
+        <label><i class="fa-solid fa-magnifying-glass"></i> Keyword</label>
+        <input type="text" id="filter-keyword" placeholder="Search by name, amenity..." oninput="debounceFilter()">
+      </div>
+      <div class="widget-group">
+        <label><i class="fa-solid fa-city"></i> City / Region</label>
+        <select id="filter-city" onchange="fetchHotels()">
+          <option value="all">All Tamil Nadu Locations</option>
+          <option value="Chennai">Chennai (Coromandel Coast)</option>
+          <option value="Ooty">Ooty (Nilgiri Hills)</option>
+          <option value="Kodaikanal">Kodaikanal (Pine & Lake)</option>
+          <option value="Madurai">Madurai (Temple Heritage)</option>
+          <option value="Mahabalipuram">Mahabalipuram (UNESCO Shore)</option>
+        </select>
+      </div>
+      <div class="widget-group">
+        <label><i class="fa-solid fa-star"></i> Minimum Rating</label>
+        <select id="filter-rating" onchange="fetchHotels()">
+          <option value="0">Any Star Rating</option>
+          <option value="4.5">4.5+ Stars</option>
+          <option value="4.8">4.8+ Ultra Luxury</option>
+        </select>
+      </div>
+      <div class="widget-group">
+        <button type="button" onclick="resetFilters()" class="btn btn-outline" style="width:100%;height:46px;">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Hotels Grid -->
+    <div id="hotels-grid" class="grid-3">
+      <!-- Populated dynamically -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Aura Grand Hotel Group Ltd. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    let debounceTimer;
+    function debounceFilter() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchHotels, 300);
+    }
+
+    function resetFilters() {
+      document.getElementById("filter-keyword").value = "";
+      document.getElementById("filter-city").value = "all";
+      document.getElementById("filter-rating").value = "0";
+      fetchHotels();
+    }
+
+    async function fetchHotels() {
+      const grid = document.getElementById("hotels-grid");
+      const keyword = document.getElementById("filter-keyword").value.trim();
+      const city = document.getElementById("filter-city").value;
+      const minRating = document.getElementById("filter-rating").value;
+
+      let queryParams = [];
+      if (keyword) queryParams.push(`q=${encodeURIComponent(keyword)}`);
+      if (city && city !== "all") queryParams.push(`city=${encodeURIComponent(city)}`);
+      if (minRating && minRating !== "0") queryParams.push(`min_rating=${minRating}`);
+      
+      const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
+
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 4rem;">
+          <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+          <p style="margin-top: 1rem;">Retrieving properties...</p>
+        </div>
+      `;
+
+      let hotels = [];
+      try {
+        const res = await apiRequest(`/hotels${queryString}`);
+        if (res.success) hotels = res.hotels;
+      } catch (e) {
+        hotels = FALLBACK_HOTELS.filter(h => {
+          if (city !== "all" && h.city !== city) return false;
+          if (minRating !== "0" && h.star_rating < parseFloat(minRating)) return false;
+          if (keyword && !h.name.toLowerCase().includes(keyword.toLowerCase())) return false;
+          return true;
+        });
+      }
+
+      if (!hotels.length) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-glass);">
+            <i class="fa-solid fa-hotel fa-3x" style="color: var(--text-dim); margin-bottom: 1rem;"></i>
+            <h3>No Properties Matched Your Criteria</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Try adjusting your destination, keyword or rating filter.</p>
+            <button onclick="resetFilters()" class="btn btn-gold btn-sm" style="margin-top: 1rem;">View All Hotels</button>
+          </div>
+        `;
+        return;
+      }
+
+      const isAdmin = Auth.getUser() && Auth.getUser().role === "admin";
+
+      grid.innerHTML = hotels.map(h => `
+        <div class="luxury-card">
+          <div class="card-img-wrap">
+            <img src="${(h.images && h.images[0]) || 'https://images.unsplash.com/photo-1566073771259-6a8506099945'}" alt="${h.name}">
+            <div class="card-badge">
+              <i class="fa-solid fa-star" style="color: #f59e0b;"></i> ${h.star_rating}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-location">
+              <i class="fa-solid fa-location-dot"></i> ${h.address || (h.city + ', ' + h.country)}
+            </div>
+            <h2 class="card-title">${h.name}</h2>
+            <p class="card-desc">${h.description}</p>
+            <div class="amenities-tags">
+              ${(h.amenities || []).map(a => `<span class="tag"><i class="fa-solid fa-check" style="color:var(--accent-gold);margin-right:3px;"></i>${a}</span>`).join('')}
+            </div>
+            <div class="card-footer">
+              <div class="price-box">
+                <span class="price-label">Nightly Rates From</span>
+                <span class="price-value">$${h.starting_price || 280} <span>/night</span></span>
+              </div>
+              ${isAdmin ? `
+                <a href="rooms.html?hotel_id=${h.id}" class="btn btn-gold" style="font-weight:600;">
+                  <i class="fa-solid fa-sliders"></i> Manage Suites
+                </a>
+              ` : `
+                <a href="rooms.html?hotel_id=${h.id}" class="btn btn-gold">
+                  Select Suite <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlCity = new URLSearchParams(window.location.search).get("city");
+      if (urlCity && urlCity !== "all") {
+        document.getElementById("filter-city").value = urlCity;
+      }
+      fetchHotels();
+    });
+  </script>
+</body>
+</html>

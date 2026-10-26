@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "Hotel Room Booking System API",
+    "_postman_id": "c1f79a9e-8c31-4a41-b8ef-93a8e9d34b21",
+    "description": "Comprehensive REST API test suite for Hotel Room Booking System, including Auth, Hotel Inventory, Room Availability, Reservation Lifecycle, and Payment Settlements.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Julian Vance\",\n  \"email\": \"julian@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"+1-555-890-1234\",\n  \"role\": \"guest\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"]}
+          }
+        },
+        {
+          "name": "Login Guest (Gets Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sophia@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@grandazure.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+          }
+        },
+        {
+          "name": "Get Current Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {"raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Hotels & Properties",
+      "item": [
+        {
+          "name": "List All Hotels",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/hotels", "host": ["{{baseUrl}}"], "path": ["hotels"]}
+          }
+        },
+        {
+          "name": "Filter Hotels by City & Min Rating",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/hotels?city=Chennai&min_rating=4.5",
+              "host": ["{{baseUrl}}"],
+              "path": ["hotels"],
+              "query": [
+                {"key": "city", "value": "Chennai"},
+                {"key": "min_rating", "value": "4.5"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Hotel By ID (with Rooms)",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/hotels/htl_001", "host": ["{{baseUrl}}"], "path": ["hotels", "htl_001"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Rooms & Suites",
+      "item": [
+        {
+          "name": "List All Rooms",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/rooms", "host": ["{{baseUrl}}"], "path": ["rooms"]}
+          }
+        },
+        {
+          "name": "Check Room Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/rooms/rm_101/availability?check_in=2026-12-01&check_out=2026-12-05",
+              "host": ["{{baseUrl}}"],
+              "path": ["rooms", "rm_101", "availability"],
+              "query": [
+                {"key": "check_in", "value": "2026-12-01"},
+                {"key": "check_out", "value": "2026-12-05"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Room Details",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/rooms/rm_101", "host": ["{{baseUrl}}"], "path": ["rooms", "rm_101"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Bookings & Reservations",
+      "item": [
+        {
+          "name": "Get Price Quote & Promo Calculation",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"room_id\": \"rm_101\",\n  \"check_in\": \"2026-12-10\",\n  \"check_out\": \"2026-12-14\",\n  \"promo_code\": \"LUXURY10\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/bookings/quote", "host": ["{{baseUrl}}"], "path": ["bookings", "quote"]}
+          }
+        },
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"room_id\": \"rm_101\",\n  \"check_in\": \"2026-12-10\",\n  \"check_out\": \"2026-12-14\",\n  \"num_guests\": 2,\n  \"special_requests\": \"Airport pickup required\",\n  \"promo_code\": \"LUXURY10\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"]}
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {"raw": "{{baseUrl}}/bookings/my-bookings", "host": ["{{baseUrl}}"], "path": ["bookings", "my-bookings"]}
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {"raw": "{{baseUrl}}/bookings/bk_001/cancel", "host": ["{{baseUrl}}"], "path": ["bookings", "bk_001", "cancel"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Payments & Invoices",
+      "item": [
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking_id\": \"bk_001\",\n  \"payment_method\": \"credit_card\",\n  \"details\": {\n    \"card_number\": \"4242424242424242\"\n  }\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/payments/process", "host": ["{{baseUrl}}"], "path": ["payments", "process"]}
+          }
+        },
+        {
+          "name": "Get Official Tax Folio / Receipt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "url": {"raw": "{{baseUrl}}/payments/receipt/pay_001", "host": ["{{baseUrl}}"], "path": ["payments", "receipt", "pay_001"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. System Health",
+      "item": [
+        {
+          "name": "API Health Check",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"]}
+          }
+        }
+      ]
+    }
+  ]
+}

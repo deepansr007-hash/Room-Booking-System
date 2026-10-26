@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Grand | Bespoke Luxury Hotel & Room Booking</title>
+  <meta name="description" content="Experience unparalleled elegance. Book 5-star suites, seaside villas, and alpine chalets worldwide with instant confirmation.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item active"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="hotels.html">Hotels</a></li>
+        <li class="nav-item"><a href="rooms.html">Suites & Rooms</a></li>
+        <li class="nav-item"><a href="my_bookings.html">My Reservations</a></li>
+      </ul>
+      <div id="nav-auth-container" class="nav-auth">
+        <!-- Injected dynamically by Auth.updateNav() -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-pill">
+        <i class="fa-solid fa-sparkles"></i> World's Finest Sanctuaries
+      </div>
+      <h1 class="hero-title">Where Refined Luxury Meets Timeless Grace</h1>
+      <p class="hero-subtitle">Discover handcrafted suites, private beach villas, and alpine retreats curated for the discerning traveler.</p>
+      
+      <!-- Interactive Booking Search Bar -->
+      <form id="hero-search-form" class="search-widget" onsubmit="handleHeroSearch(event)">
+        <div class="widget-group">
+          <label><i class="fa-solid fa-location-dot"></i> Destination</label>
+          <select id="search-city">
+            <option value="all">All Tamil Nadu Destinations</option>
+            <option value="Chennai">Chennai (Coromandel Coast)</option>
+            <option value="Ooty">Ooty (Nilgiri Hills)</option>
+            <option value="Kodaikanal">Kodaikanal (Pine & Lake)</option>
+            <option value="Madurai">Madurai (Temple Heritage)</option>
+            <option value="Mahabalipuram">Mahabalipuram (UNESCO Shore)</option>
+          </select>
+        </div>
+        <div class="widget-group">
+          <label><i class="fa-solid fa-calendar-days"></i> Check-in</label>
+          <input type="date" id="search-check-in" required>
+        </div>
+        <div class="widget-group">
+          <label><i class="fa-solid fa-calendar-check"></i> Check-out</label>
+          <input type="date" id="search-check-out" required>
+        </div>
+        <div class="widget-group">
+          <button type="submit" class="btn btn-gold" style="width:100%;height:46px;">
+            <i class="fa-solid fa-magnifying-glass"></i> Explore
+          </button>
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <!-- Featured Destinations & Hotels -->
+  <main class="container">
+    <div class="section-header">
+      <span class="section-tag">Curated Portfolio</span>
+      <h2 class="section-title">Iconic Destinations & Retreats</h2>
+      <p class="section-desc">Each property is architecturally bespoke, providing world-class amenities, award-winning culinary craft, and private concierge attention.</p>
+    </div>
+
+    <!-- Hotel Cards Container -->
+    <div id="featured-hotels-grid" class="grid-4">
+      <div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 3rem;">
+        <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+        <p style="margin-top: 1rem;">Curating the finest destinations...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Luxury Features Section -->
+  <section style="background: var(--bg-secondary); border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">The Aura Experience</span>
+        <h2 class="section-title">Uncompromising Luxury</h2>
+      </div>
+
+      <div class="grid-4">
+        <div class="luxury-card" style="padding: 2rem; text-align: center;">
+          <div style="font-size: 2.2rem; color: var(--accent-gold); margin-bottom: 1rem;">
+            <i class="fa-solid fa-bell-concierge"></i>
+          </div>
+          <h3 style="font-family: var(--font-serif); margin-bottom: 0.5rem; font-size: 1.25rem;">24/7 Royal Butler</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Dedicated concierge tailored to personalize itinerary reservations and private flights.</p>
+        </div>
+
+        <div class="luxury-card" style="padding: 2rem; text-align: center;">
+          <div style="font-size: 2.2rem; color: var(--accent-gold); margin-bottom: 1rem;">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <h3 style="font-family: var(--font-serif); margin-bottom: 0.5rem; font-size: 1.25rem;">Michelin Gastronomy</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Culinary masterpieces created by three-star chefs using organic artisanal harvests.</p>
+        </div>
+
+        <div class="luxury-card" style="padding: 2rem; text-align: center;">
+          <div style="font-size: 2.2rem; color: var(--accent-gold); margin-bottom: 1rem;">
+            <i class="fa-solid fa-spa"></i>
+          </div>
+          <h3 style="font-family: var(--font-serif); margin-bottom: 0.5rem; font-size: 1.25rem;">Wellness & Thermal Spas</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Rejuvenating ayurvedic hydrotherapy, sauna lounges, and panoramic infinity pools.</p>
+        </div>
+
+        <div class="luxury-card" style="padding: 2rem; text-align: center;">
+          <div style="font-size: 2.2rem; color: var(--accent-gold); margin-bottom: 1rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 style="font-family: var(--font-serif); margin-bottom: 0.5rem; font-size: 1.25rem;">Guaranteed Reservation</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Instant encrypted payment settlement with zero-collision booking architecture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Aura Grand Hotel Group Ltd. All rights reserved. Precision Engineered Hospitality.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Set default dates
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 2);
+    document.getElementById("search-check-in").value = today.toISOString().split("T")[0];
+    document.getElementById("search-check-out").value = tomorrow.toISOString().split("T")[0];
+
+    function handleHeroSearch(e) {
+      e.preventDefault();
+      const city = document.getElementById("search-city").value;
+      const checkIn = document.getElementById("search-check-in").value;
+      const checkOut = document.getElementById("search-check-out").value;
+      window.location.href = `rooms.html?city=${encodeURIComponent(city)}&check_in=${checkIn}&check_out=${checkOut}`;
+    }
+
+    async function loadFeaturedHotels() {
+      const grid = document.getElementById("featured-hotels-grid");
+      let hotels = [];
+      try {
+        const res = await apiRequest("/hotels");
+        if (res.success && res.hotels.length) hotels = res.hotels;
+      } catch (e) {
+        hotels = FALLBACK_HOTELS;
+      }
+
+      if (!hotels.length) hotels = FALLBACK_HOTELS;
+
+      const isAdmin = Auth.getUser() && Auth.getUser().role === "admin";
+
+      grid.innerHTML = hotels.map(h => `
+        <div class="luxury-card">
+          <div class="card-img-wrap">
+            <img src="${(h.images && h.images[0]) || 'https://images.unsplash.com/photo-1566073771259-6a8506099945'}" alt="${h.name}">
+            <div class="card-badge">
+              <i class="fa-solid fa-star" style="color: #f59e0b;"></i> ${h.star_rating}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-location">
+              <i class="fa-solid fa-location-dot"></i> ${h.city}, ${h.state || 'Tamil Nadu'}
+            </div>
+            <h3 class="card-title">${h.name}</h3>
+            <p class="card-desc">${h.description.slice(0, 95)}...</p>
+            <div class="amenities-tags">
+              ${(h.amenities || []).slice(0, 3).map(a => `<span class="tag">${a}</span>`).join('')}
+            </div>
+            <div class="card-footer">
+              <div class="price-box">
+                <span class="price-label">Starting From</span>
+                <span class="price-value">$${h.starting_price || 280} <span>/night</span></span>
+              </div>
+              ${isAdmin ? `
+                <a href="rooms.html?hotel_id=${h.id}" class="btn btn-gold btn-sm" style="font-weight:600;">
+                  <i class="fa-solid fa-sliders"></i> Manage Suites
+                </a>
+              ` : `
+                <a href="rooms.html?hotel_id=${h.id}" class="btn btn-gold btn-sm">
+                  View Suites <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener("DOMContentLoaded", loadFeaturedHotels);
+  </script>
+</body>
+</html>

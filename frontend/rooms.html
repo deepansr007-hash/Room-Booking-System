@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Grand | Suites, Penthouses & Private Villas</title>
+  <meta name="description" content="Explore handcrafted ocean suites, panoramic penthouses, and heritage villas with private pools and personal butler service.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="index.html">Home</a></li>
+        <li class="nav-item"><a href="hotels.html">Hotels</a></li>
+        <li class="nav-item active"><a href="rooms.html">Suites & Rooms</a></li>
+        <li class="nav-item"><a href="my_bookings.html">My Reservations</a></li>
+      </ul>
+      <div id="nav-auth-container" class="nav-auth"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Admin Suite Management Banner (Visible only to Administrators) -->
+    <div id="admin-suite-banner" style="display:none; background:linear-gradient(135deg, rgba(212,175,55,0.15), rgba(30,41,59,0.7)); border:1px solid rgba(212,175,55,0.4); border-radius:var(--radius-md); padding:1rem 1.5rem; margin-top:1.5rem; margin-bottom:1.5rem; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; box-shadow:var(--shadow-sm);">
+      <div style="display:flex; align-items:center; gap:0.8rem;">
+        <div style="width:38px; height:38px; border-radius:var(--radius-sm); background:rgba(212,175,55,0.2); color:var(--accent-gold); display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div>
+          <div style="font-weight:600; color:#fff; font-size:0.95rem;">Administrator Mode: Suite Management Active</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">You can manage suite tariffs, features, capacity, and availability directly.</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:0.6rem;">
+        <a href="admin.html" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-shield-halved"></i> Admin Portal
+        </a>
+        <button onclick="openAddSuiteModal()" class="btn btn-gold btn-sm">
+          <i class="fa-solid fa-plus"></i> Add New Suite
+        </button>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-tag">Sanctuary Living</span>
+      <h1 class="section-title">Suites, Penthouses & Private Pavilions</h1>
+      <p class="section-desc">Select your desired accommodation with bespoke beddings, deep soaking tubs, and personalized services.</p>
+    </div>
+
+    <!-- Filter Control Bar -->
+    <div class="search-widget" style="margin-bottom: 3.5rem;">
+      <div class="widget-group">
+        <label><i class="fa-solid fa-bed"></i> Room Type</label>
+        <select id="filter-type" onchange="fetchRooms()">
+          <option value="all">All Room Categories</option>
+          <option value="Deluxe">Deluxe Suites</option>
+          <option value="Penthouse">Presidential Penthouses</option>
+          <option value="Heritage">Heritage & Colonial Suites</option>
+          <option value="Panorama">Pine & Valley Panorama</option>
+          <option value="Villa">Courtyard & Shore Villas</option>
+        </select>
+      </div>
+      <div class="widget-group">
+        <label><i class="fa-solid fa-users"></i> Min Capacity</label>
+        <select id="filter-capacity" onchange="fetchRooms()">
+          <option value="0">Any Capacity</option>
+          <option value="2">2+ Guests</option>
+          <option value="4">4+ Guests</option>
+        </select>
+      </div>
+      <div class="widget-group">
+        <label><i class="fa-solid fa-dollar-sign"></i> Max Price / Night</label>
+        <select id="filter-price" onchange="fetchRooms()">
+          <option value="9999">Any Price</option>
+          <option value="350">Under $350</option>
+          <option value="500">Under $500</option>
+          <option value="800">Under $800</option>
+        </select>
+      </div>
+      <div class="widget-group">
+        <button type="button" onclick="resetRoomFilters()" class="btn btn-outline" style="width:100%;height:46px;">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Rooms Grid -->
+    <div id="rooms-grid" class="grid-3">
+      <!-- Populated dynamically -->
+    </div>
+  </main>
+
+  <!-- ======================================================================
+       MODAL: MANAGE / EDIT SUITE (ADMIN ONLY)
+       ====================================================================== -->
+  <div id="modal-manage-suite" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border-glass); padding-bottom:1rem;">
+        <h3 id="modal-suite-title" style="font-family:var(--font-serif); font-size:1.4rem; color:#fff;">
+          <i class="fa-solid fa-sliders" style="color:var(--accent-gold);"></i> Manage Suite
+        </h3>
+        <button onclick="closeModal('modal-manage-suite')" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-manage-suite" onsubmit="handleSaveSuite(event)">
+        <input type="hidden" id="suite-edit-id" value="">
+
+        <div class="admin-form-group">
+          <label>Suite Title / Category *</label>
+          <input type="text" id="suite-name" placeholder="e.g. Deluxe Coromandel Ocean Suite" required>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Trip Place / Hotel *</label>
+            <select id="suite-hotel-id" required>
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Room Door Number *</label>
+            <input type="text" id="suite-number" placeholder="e.g. Coromandel-101" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Price Per Night ($) *</label>
+            <input type="number" id="suite-price" min="10" step="1" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Max Guests Capacity *</label>
+            <input type="number" id="suite-capacity" min="1" max="10" value="2" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Bed Configuration *</label>
+            <input type="text" id="suite-bed" placeholder="King Size Bed" value="King Size Bed" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="admin-form-group">
+            <label>Availability Status</label>
+            <select id="suite-available">
+              <option value="true">Active & Bookable</option>
+              <option value="false">Under Maintenance / Blocked</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Cover Photo URL</label>
+            <input type="url" id="suite-image" placeholder="https://images.unsplash.com/photo-...">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label>Features & Amenities (Comma separated tags)</label>
+          <input type="text" id="suite-features" placeholder="Private Sea Balcony, Italian Marble Bath, Rain Shower, Free WiFi">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.8rem; border-top:1px solid var(--border-glass); padding-top:1.2rem;">
+          <button type="button" id="btn-delete-suite" onclick="deleteCurrentSuite()" class="btn btn-danger btn-sm" style="display:none;">
+            <i class="fa-solid fa-trash"></i> Delete Suite
+          </button>
+          <div style="display:flex; gap:0.6rem; margin-left:auto;">
+            <button type="button" onclick="closeModal('modal-manage-suite')" class="btn btn-outline btn-sm">Cancel</button>
+            <button type="submit" id="btn-save-suite" class="btn btn-gold btn-sm">
+              <i class="fa-solid fa-check"></i> Save Suite Details
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Aura Grand Hotel Group Ltd. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetHotelId = urlParams.get("hotel_id");
+    const checkInParam = urlParams.get("check_in");
+    const checkOutParam = urlParams.get("check_out");
+
+    let loadedRooms = [];
+    let loadedHotels = [];
+
+    function resetRoomFilters() {
+      document.getElementById("filter-type").value = "all";
+      document.getElementById("filter-capacity").value = "0";
+      document.getElementById("filter-price").value = "9999";
+      fetchRooms();
+    }
+
+    async function fetchRooms() {
+      const grid = document.getElementById("rooms-grid");
+      const roomType = document.getElementById("filter-type").value;
+      const capacity = document.getElementById("filter-capacity").value;
+      const maxPrice = document.getElementById("filter-price").value;
+
+      // Check Admin State
+      const user = Auth.getUser();
+      const isAdmin = user && user.role === "admin";
+      const adminBanner = document.getElementById("admin-suite-banner");
+      if (adminBanner) {
+        adminBanner.style.display = isAdmin ? "flex" : "none";
+      }
+
+      let queryParams = [];
+      if (targetHotelId) queryParams.push(`hotel_id=${targetHotelId}`);
+      if (roomType !== "all") queryParams.push(`room_type=${encodeURIComponent(roomType)}`);
+      if (capacity !== "0") queryParams.push(`capacity=${capacity}`);
+      if (maxPrice !== "9999") queryParams.push(`max_price=${maxPrice}`);
+
+      const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
+
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 4rem;">
+          <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+          <p style="margin-top: 1rem;">Finding available suites...</p>
+        </div>
+      `;
+
+      let rooms = [];
+      try {
+        const res = await apiRequest(`/rooms${queryString}`);
+        if (res.success) rooms = res.rooms;
+      } catch (e) {
+        rooms = FALLBACK_ROOMS.filter(r => {
+          if (targetHotelId && r.hotel_id !== targetHotelId) return false;
+          if (roomType !== "all" && !r.room_type.toLowerCase().includes(roomType.toLowerCase())) return false;
+          if (capacity !== "0" && r.capacity < parseInt(capacity)) return false;
+          if (maxPrice !== "9999" && r.price_per_night > parseFloat(maxPrice)) return false;
+          return true;
+        });
+      }
+
+      loadedRooms = rooms;
+
+      // Load hotels for dropdown selection
+      if (!loadedHotels.length) {
+        try {
+          const hRes = await apiRequest("/hotels");
+          if (hRes.success) loadedHotels = hRes.hotels;
+        } catch(e) {
+          loadedHotels = FALLBACK_HOTELS;
+        }
+      }
+
+      if (!rooms.length) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-glass);">
+            <i class="fa-solid fa-bed fa-3x" style="color: var(--text-dim); margin-bottom: 1rem;"></i>
+            <h3>No Accommodations Found</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Please modify your filters or explore other luxury properties.</p>
+            <button onclick="resetRoomFilters()" class="btn btn-gold btn-sm" style="margin-top: 1rem;">View All Suites</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = rooms.map(r => {
+        let bookingUrl = `booking.html?room_id=${r.id}`;
+        if (checkInParam && checkOutParam) {
+          bookingUrl += `&check_in=${checkInParam}&check_out=${checkOutParam}`;
+        }
+
+        // Action Button: If Admin, show "Manage Suite", else show "Reserve Suite"
+        const actionButtonHtml = isAdmin ? `
+          <div style="display:flex; gap:0.4rem; align-items:center;">
+            <button onclick="openManageSuiteModal('${r.id}')" class="btn btn-gold" style="font-weight:600; padding:0.65rem 1.1rem; box-shadow:0 0 10px rgba(212,175,55,0.3);">
+              <i class="fa-solid fa-sliders"></i> Manage Suite
+            </button>
+            <a href="${bookingUrl}" class="btn btn-outline btn-sm" title="Test Guest Booking Flow" style="padding:0.65rem 0.8rem;">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
+        ` : `
+          <a href="${bookingUrl}" class="btn btn-gold">
+            Reserve Suite <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        `;
+
+        return `
+          <div class="luxury-card">
+            <div class="card-img-wrap">
+              <img src="${(r.images && r.images[0]) || 'https://images.unsplash.com/photo-1590490360182-c33d57733427'}" alt="${r.room_type}">
+              <div class="card-badge">
+                <i class="fa-solid fa-users"></i> Up to ${r.capacity} Guests
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card-location">
+                <i class="fa-solid fa-hotel"></i> ${r.hotel_name || 'Tamil Nadu Luxury Resort'}
+              </div>
+              <h2 class="card-title">${r.room_type}</h2>
+              <div style="font-size: 0.88rem; color: var(--accent-gold-light); margin-bottom: 0.8rem;">
+                <i class="fa-solid fa-bed"></i> ${r.bed_type} &bull; Room ${r.room_number}
+                ${r.is_available === false ? '<span class="status-pill status-cancelled" style="margin-left:6px; font-size:0.7rem;">Maintenance</span>' : ''}
+              </div>
+              <div class="amenities-tags">
+                ${(r.features || []).map(f => `<span class="tag">${f}</span>`).join('')}
+              </div>
+              <div class="card-footer">
+                <div class="price-box">
+                  <span class="price-label">Price Per Night</span>
+                  <span class="price-value">$${r.price_per_night} <span>/night</span></span>
+                </div>
+                ${actionButtonHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Operations
+    function openManageSuiteModal(roomId) {
+      const room = loadedRooms.find(x => x.id === roomId);
+      if (!room) return;
+
+      document.getElementById("modal-suite-title").innerHTML = `<i class="fa-solid fa-sliders" style="color:var(--accent-gold);"></i> Manage Suite: ${room.room_type}`;
+      document.getElementById("suite-edit-id").value = room.id;
+      document.getElementById("suite-name").value = room.room_type || "";
+      document.getElementById("suite-number").value = room.room_number || "";
+      document.getElementById("suite-price").value = room.price_per_night || 250;
+      document.getElementById("suite-capacity").value = room.capacity || 2;
+      document.getElementById("suite-bed").value = room.bed_type || "King Size Bed";
+      document.getElementById("suite-available").value = room.is_available !== false ? "true" : "false";
+      document.getElementById("suite-image").value = (room.images && room.images[0]) || "";
+      document.getElementById("suite-features").value = (room.features || []).join(", ");
+
+      // Populate hotel dropdown
+      populateHotelSelect(room.hotel_id);
+
+      document.getElementById("btn-delete-suite").style.display = "inline-flex";
+      document.getElementById("modal-manage-suite").style.display = "flex";
+    }
+
+    function openAddSuiteModal() {
+      document.getElementById("modal-suite-title").innerHTML = `<i class="fa-solid fa-plus" style="color:var(--accent-gold);"></i> Add New Luxury Suite`;
+      document.getElementById("suite-edit-id").value = "";
+      document.getElementById("suite-name").value = "";
+      document.getElementById("suite-number").value = "TN-101";
+      document.getElementById("suite-price").value = "300";
+      document.getElementById("suite-capacity").value = "2";
+      document.getElementById("suite-bed").value = "King Size Bed";
+      document.getElementById("suite-available").value = "true";
+      document.getElementById("suite-image").value = "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1000&q=80";
+      document.getElementById("suite-features").value = "Private Balcony, Italian Marble Bath, Rain Shower, Free WiFi";
+
+      populateHotelSelect(targetHotelId);
+
+      document.getElementById("btn-delete-suite").style.display = "none";
+      document.getElementById("modal-manage-suite").style.display = "flex";
+    }
+
+    function populateHotelSelect(selectedHotelId) {
+      const select = document.getElementById("suite-hotel-id");
+      select.innerHTML = loadedHotels.map(h => `
+        <option value="${h.id}" ${h.id === selectedHotelId ? 'selected' : ''}>
+          ${h.name} (${h.city})
+        </option>
+      `).join('');
+    }
+
+    async function handleSaveSuite(e) {
+      e.preventDefault();
+      const editId = document.getElementById("suite-edit-id").value;
+      const room_type = document.getElementById("suite-name").value.trim();
+      const hotel_id = document.getElementById("suite-hotel-id").value;
+      const room_number = document.getElementById("suite-number").value.trim();
+      const price_per_night = parseFloat(document.getElementById("suite-price").value);
+      const capacity = parseInt(document.getElementById("suite-capacity").value);
+      const bed_type = document.getElementById("suite-bed").value.trim();
+      const is_available = document.getElementById("suite-available").value === "true";
+      const image_url = document.getElementById("suite-image").value.trim();
+      const featuresStr = document.getElementById("suite-features").value;
+
+      const features = featuresStr.split(",").map(f => f.trim()).filter(f => f.length > 0);
+      const images = image_url ? [image_url] : ["https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1000&q=80"];
+
+      const payload = {
+        hotel_id,
+        room_type,
+        room_number,
+        price_per_night,
+        capacity,
+        bed_type,
+        is_available,
+        images,
+        features
+      };
+
+      try {
+        if (editId) {
+          // Update existing suite
+          const res = await apiRequest(`/rooms/${editId}`, "PUT", payload, true);
+          if (res.success) {
+            showToast("Suite details updated successfully.", "success");
+            closeModal("modal-manage-suite");
+            await fetchRooms();
+          }
+        } else {
+          // Create new suite
+          const res = await apiRequest("/admin/rooms", "POST", payload, true);
+          if (res.success) {
+            showToast("New luxury suite created successfully.", "success");
+            closeModal("modal-manage-suite");
+            await fetchRooms();
+          }
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to save suite details.", "error");
+      }
+    }
+
+    async function deleteCurrentSuite() {
+      const editId = document.getElementById("suite-edit-id").value;
+      const suiteName = document.getElementById("suite-name").value;
+      if (!editId) return;
+
+      if (!confirm(`Are you sure you want to permanently delete '${suiteName}'? This action cannot be undone.`)) return;
+
+      try {
+        const res = await apiRequest(`/rooms/${editId}`, "DELETE", null, true);
+        if (res.success) {
+          showToast("Suite deleted successfully.", "success");
+          closeModal("modal-manage-suite");
+          await fetchRooms();
+        }
+      } catch (err) {
+        showToast(err.message || "Failed to delete suite.", "error");
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    window.onclick = function(e) {
+      if (e.target.classList.contains("admin-modal-overlay")) {
+        e.target.style.display = "none";
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", fetchRooms);
+  </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account | Aura Grand Luxury Hotels</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <i class="fa-solid fa-gem"></i>
+        <span>AURA GRAND</span>
+      </a>
+      <div id="nav-auth-container" class="nav-auth"></div>
+    </div>
+  </nav>
+
+  <main class="auth-wrapper">
+    <div class="auth-card" style="max-width: 520px;">
+      <div class="auth-header">
+        <h1 class="auth-title">Become an Elite Member</h1>
+        <p class="auth-subtitle">Join the Aura Grand Club to unlock exclusive rates, champagne welcomes, and flexible checkouts.</p>
+      </div>
+
+      <form id="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="reg-name" class="form-input" placeholder="e.g. Lady Evelyn Montgomery" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="reg-email" class="form-input" placeholder="e.g. evelyn@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-phone">Phone Number</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-phone"></i>
+            <input type="tel" id="reg-phone" class="form-input" placeholder="+1-555-019-9000" required>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="reg-password" class="form-input" placeholder="Min. 6 chars" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="reg-confirm">Confirm Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-shield-check"></i>
+              <input type="password" id="reg-confirm" class="form-input" placeholder="Repeat password" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-role">Account Type</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-user-tag"></i>
+            <select id="reg-role" class="form-input" style="padding-left: 2.8rem;">
+              <option value="guest">Guest / Private Member</option>
+              <option value="admin">Hotel Operations Administrator</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-register" class="btn btn-gold" style="width:100%;margin-top:1.2rem;height:48px;">
+          <i class="fa-solid fa-user-plus"></i> Complete Membership Registration
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:1.8rem;font-size:0.9rem;color:var(--text-muted);">
+        Already a member? 
+        <a href="login.html" style="color:var(--accent-gold);font-weight:600;">Sign In</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const phone = document.getElementById("reg-phone").value.trim();
+      const password = document.getElementById("reg-password").value;
+      const confirm = document.getElementById("reg-confirm").value;
+      const role = document.getElementById("reg-role").value;
+      const btn = document.getElementById("btn-register");
+
+      if (password !== confirm) {
+        showToast("Passwords do not match.", "error");
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast("Password must be at least 6 characters.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Membership...`;
+
+      try {
+        const res = await apiRequest("/auth/register", "POST", {
+          name, email, phone, password, role
+        });
+        if (res.success && res.token) {
+          Auth.setAuth(res.token, res.user);
+          showToast("Membership created successfully! Welcome to Aura Grand.", "success");
+          setTimeout(() => {
+            window.location.href = "hotels.html";
+          }, 1000);
+        }
+      } catch (err) {
+        showToast(err.message || "Registration failed. Please check inputs.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Complete Membership Registration`;
+      }
+    }
+  </script>
+</body>
+</html>
