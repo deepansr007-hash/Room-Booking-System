@@ -1,8 +1,19 @@
-# 🏨 Hotel Room Booking System
+# 🏨 Hotel Room Booking System — Aura Grand
 
 > **A full-stack, enterprise-grade luxury hotel and room reservation system** engineered with a Python Flask RESTful micro-service backend, zero-collision calendar concurrency engine, PyJWT cryptographic authentication, and an ultra-modern Vanilla CSS luxury design system.
 
+[![Live Demo on Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://room-booking-system-frontend-two.vercel.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/deepansr007-hash/Room-Booking-System)
+
+🌐 **Live Web Application:** [https://room-booking-system-frontend-two.vercel.app/](https://room-booking-system-frontend-two.vercel.app/)
+
 ---
+
+## 🚀 Live Deployment
+
+- 🔗 **Frontend (Vercel):** [https://room-booking-system-frontend-two.vercel.app/](https://room-booking-system-frontend-two.vercel.app/)
+- 🔗 **GitHub Repository:** [https://github.com/deepansr007-hash/Room-Booking-System](https://github.com/deepansr007-hash/Room-Booking-System)
+
 
 ## 🌟 Key Features
 
