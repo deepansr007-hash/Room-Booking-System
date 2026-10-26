@@ -4,9 +4,29 @@
  * and graceful fallback data.
  */
 
-const API_BASE_URL = window.location.origin.includes("5000")
-  ? window.location.origin + "/api"
-  : "http://127.0.0.1:5000/api";
+// Deployed Render backend URL (Optional: Paste your Render URL here, e.g. "https://your-service.onrender.com/api", or leave empty to use Vercel proxy / auto-detect)
+const RENDER_BACKEND_URL = "";
+
+const API_BASE_URL = (() => {
+  if (RENDER_BACKEND_URL && RENDER_BACKEND_URL.trim() !== "") {
+    return RENDER_BACKEND_URL.replace(/\/$/, "");
+  }
+  if (window.RENDER_API_URL) {
+    return window.RENDER_API_URL.replace(/\/$/, "");
+  }
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  if (isLocal) {
+    return window.location.origin.includes("5000")
+      ? window.location.origin + "/api"
+      : "http://127.0.0.1:5000/api";
+  }
+  if (window.location.hostname.endsWith(".onrender.com")) {
+    return window.location.origin + "/api";
+  }
+  // On Vercel or custom domain: /api is routed to Render via vercel.json rewrites proxy
+  return "/api";
+})();
+
 
 // Local Storage Keys
 const TOKEN_KEY = "luxe_jwt_token";
